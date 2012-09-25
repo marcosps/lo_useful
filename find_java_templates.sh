@@ -5,8 +5,13 @@
 
 for i in `find -name *.java -print`
 do
-	if cat $i | grep -i "@author" 1> /dev/null 2> /dev/null
+	if cat $i | grep -i "To change this template, choose Tools" 1> /dev/null 2> /dev/null
 	then
 		echo $i
+
+	elif cat $i | grep -i "@author" 1> /dev/null 2> /dev/null
+	then
+		echo $i
+
 	fi
 done
