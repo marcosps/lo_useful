@@ -4,8 +4,7 @@
 # This program is free software. You can redistribute it and/or modify
 # is under the terms of the GNU Gerenal Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
+# any later version.
 
 
 ## Configs Section
@@ -15,6 +14,7 @@ path=$(pwd)
 ext_a="*.*xx" # for *.cxx and *.hxx
 ext_b="*.c"   # for *.c
 ext_c="*.h"   # for *.h
+
 
 ## Functions Section
 fileVerify()
@@ -37,7 +37,7 @@ fileCleanner()
 # Remove possible old files
 fileCleanner
 
-# Create a new file
+# Create a new file to put the search result
 for folders in $(ls)
 do
 	if [ -d ./$folders ]; then
