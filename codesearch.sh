@@ -5,6 +5,8 @@
 # is under the terms of the GNU Gerenal Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # any later version.
+#
+# Credits: Ricardo Montania - ricardo [at] linuxafundo.com.br
 
 
 ## Configs Section
