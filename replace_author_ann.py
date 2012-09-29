@@ -1,8 +1,12 @@
+  #This program is free software. You can redistribute it and/or modify
+  # is under the terms of the GNU Gerenal Public License as published by
+  # the Free Software Foundation, either version 2 of the License, or
+  # any later version.
+
 # This python source contains tools. So, if you have a good ideia... Implement!
-# My Python skills is not so good. So if you have some tips, tell me and Implement it!  :) 
+# My Python skills is not so good. So, if you have some tips tell me and Implement it!  :) 
 
 import os
-
 
 def removeAnn(files):
 	name = os.path.abspath(files)
@@ -21,6 +25,7 @@ def removeFrom(path):
 			removeFrom(files)
 		if files.endswith('.java'):
 			removeAnn(files)
+
 
 # This function will remove all @author annotations found in the java sources
 # TODO - It's necesary remove empty comments
