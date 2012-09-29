@@ -1,0 +1,8 @@
+This repository contains tools for help LibreOffice development.
+
+
+*** Tools ***
+
+-> replace_author_ann.py: This python script removes the occurrences of '@author' annotations inm Java sources files. ( It's not ready )
+
+
