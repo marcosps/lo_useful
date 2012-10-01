@@ -43,9 +43,8 @@ lns=$(wc -l $file)
 y=$(expr "$lns" : '\([0-9]*\)')
 while [ "$x" -lt "$y" ];
 do
-    rm -rf $tmp 2> /dev/null
     let x=x+1
-    current_macro=$(head -n $x $file | tail -n 1)
+    current_macro="$(head -n $x $file | tail -n 1)"
     # if exist an '\', replace for an blank space
     current_macro=$(echo "${current_macro/\\/ }")
     # if current_macro has 2 words continue the script else go to the begin of while
@@ -60,18 +59,32 @@ do
 
     just_macro=$(echo $current_macro | cut -d' ' -f1)
 
-    # look for any use of the macro
-    grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 >> $tmp
+    # Verify if the source of the current macro is a cxx file
+    extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
+    if [ "$extension" == "cxx" ]; then
+        how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
+        if [ "$how_many" == "1" ]; then
+            echo "Used in the file $how_many time (the #define line)" >> $fileOut
+            echo "Wich mean the macro can be removed! :)" >> $fileOut
+        else
+            echo "Used in the file $how_many times" >> $fileOut
+        fi
 
-    how_many=$(cat $tmp | wc -l)
-    how_many=$(($how_many-1))
+    else
 
-    echo "Number of files using it: $how_many" >> $fileOut
-    if [ "$how_many" == "0" ]; then
-        echo "None! This macro can be removed! :)" >> $tmp
+        # look for any use of the macro
+        grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 > $tmp
+
+        how_many=$(cat $tmp | wc -l)
+        how_many=$(($how_many-1))
+
+        echo "Number of files using it: $how_many" >> $fileOut
+        if [ "$how_many" == "0" ]; then
+            echo "Wich mean the macro can be removed! :)" >> $tmp
+        fi
+
+        grep -v "$first_use" $tmp >> $fileOut
     fi
-
-    grep -v "$first_use" $tmp >> $fileOut
 
     echo " " >> $fileOut
     echo "---" >> $fileOut
