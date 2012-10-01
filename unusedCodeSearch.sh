@@ -79,5 +79,14 @@ do
     echo " " >> $fileOut
 done
 
-rm $tmp $file
-awk 'NR==1{print "Search Result:\n[Type <q> to exit Up,Down,PgUp,PgDown to navigate]\n"}1' $fileOut | less
+if [ -f $tmp ]; then
+	rm $tmp
+fi
+
+if [ -f $file ]; then
+	rm $file
+fi
+
+if [ -f $fileOut ]; then
+	awk 'NR==1{print "Search Result:\n[Type <q> to exit Up,Down,PgUp,PgDown to navigate]\n"}1' $fileOut | less
+fi
