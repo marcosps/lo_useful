@@ -5,13 +5,21 @@
 
 for i in `find -name *.java -print`
 do
-	if cat $i | grep -i "To change this template, choose Tools" 1> /dev/null 2> /dev/null
-	then
-		echo 'Template' $i
 
-	elif cat $i | grep -i "@author" 1> /dev/null 2> /dev/null
+	if echo "$i" | grep "build" > /dev/null
 	then
-		echo 'Author' $i
+		# there is a simple method for just skip this file?
+		echo "" > /dev/null
+	else
 
+		if cat $i | grep -i "To change this template, choose Tools" 1> /dev/null 2> /dev/null
+		then
+			echo 'Template' $i
+
+		elif cat $i | grep -i "@author" 1> /dev/null 2> /dev/null
+		then
+			echo 'Author' $i
+
+		fi
 	fi
 done
