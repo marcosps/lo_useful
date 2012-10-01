@@ -13,7 +13,11 @@
 
 ### About this script:
 ### 
-### Colocar aqui a ideia geral.. em ingles, claro! :P
+### We can call this script without any parameters: it will show all files that uses a
+### specific macros.
+###
+### We can also call this scirpt with the parameter macros: It wll show only the macros
+### that are not used and can be removed
 ###
 
 # Credits: Ricardo Montania - ricardo [at] linuxafundo.com.br
@@ -54,42 +58,57 @@ do
 
     first_use=$(grep -R "$current_macro" * | cut -d':' -f1)
 
-    echo "Macro: $current_macro" >> $fileOut
-    echo "Declared by: $first_use" >> $fileOut
-
     just_macro=$(echo $current_macro | cut -d' ' -f1)
 
-    # Verify if the source of the current macro is a cxx file
-    extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
-    if [ "$extension" == "cxx" ]; then
-        how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
-        if [ "$how_many" == "1" ]; then
-            echo "Used in the file $how_many time (the #define line)" >> $fileOut
-            echo "Wich mean the macro can be removed! :)" >> $fileOut
-        else
-            echo "Used in the file $how_many times" >> $fileOut
-        fi
+	# the $1 means that we jsut want to know the macros that can be removed
+	if [ "$1" != "macros" ]; then
+		echo "Macro: $current_macro" >> $fileOut
+		echo "Declared by: $first_use" >> $fileOut
+	fi
 
-    else
+	# Verify if the source of the current macro is a cxx file
+	extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
+	if [ "$extension" == "cxx" ]; then
+		how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
+		if [ "$how_many" == "1" ]; then
 
-        # look for any use of the macro
-        grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 > $tmp
+			if [ "$1" != "macros" ]; then
+				echo "Used in the file $how_many time (the #define line)" >> $fileOut
+				echo "Wich mean the macro can be removed! :)" >> $fileOut
+			else
+				echo $current_macro in $first_use can be removed >> $fileOut
+			fi
+		else
+			echo "Used in the file $how_many times" >> $fileOut
+		fi
 
-        how_many=$(cat $tmp | wc -l)
-        how_many=$(($how_many-1))
+	else
+		# look for any use of the macro
+		grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 > $tmp
 
-        echo "Number of files using it: $how_many" >> $fileOut
-        if [ "$how_many" == "0" ]; then
-            echo "Wich mean the macro can be removed! :)" >> $tmp
-        fi
+		how_many=$(cat $tmp | wc -l)
+		how_many=$(($how_many-1))
 
-        grep -v "$first_use" $tmp >> $fileOut
-    fi
+		if [ "$1" != "macros" ]; then
+			echo "Number of files using it: $how_many" >> $fileOut
+			grep -v "$first_use" $tmp >> $fileOut
+		fi
 
-    echo " " >> $fileOut
-    echo "---" >> $fileOut
-    echo " " >> $fileOut
-    echo " " >> $fileOut
+		if [ "$how_many" == "0" ]; then
+			if [ "$1" != "macros" ]; then
+				echo "Wich mean the macro can be removed! :)" >> $tmp
+			else
+				echo $current_macro in $first_use can be removed >> $fileOut
+			fi
+		fi
+	fi
+
+	if [ "$1" != "macros" ]; then
+		echo " " >> $fileOut
+		echo "---" >> $fileOut
+		echo " " >> $fileOut
+		echo " " >> $fileOut
+	fi
 done
 
 if [ -f $tmp ]; then
