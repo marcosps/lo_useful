@@ -79,7 +79,10 @@ do
 				echo $current_macro in $first_use can be removed >> $fileOut
 			fi
 		else
-			echo "Used in the file $how_many times" >> $fileOut
+			if [ "$1" != "macros" ];
+			then
+				echo "Used in the file $how_many times" >> $fileOut
+			fi
 		fi
 
 	else
