@@ -16,26 +16,85 @@
 ### We can call this script without any parameters: it will show all files that uses a
 ### specific macros.
 ###
-### We can also call this scirpt with the parameter macros: It wll show only the macros
+### We can also call this script with the parameter macros: It wll show only the macros
 ### that are not used and can be removed
 ###
 
 # Credits: Ricardo Montania - ricardo [at] linuxafundo.com.br
 
-
-## Configs Section
+###
+### Configs Section
+###
+headers=".hxx"
+souces=".cxx"
 path=$(pwd)
-file="/tmp/macros_encontradas.txt"
-fileOut="/tmp/macros_final.txt"
-tmp="/tmp/tmp.txt"
-ext_a="*.*xx"
+result="/tmp/libo_result.txt"
+tmpA="/tmp/tmpA.txt"
+tmpB="/tmp/tmpB.txt"
 
-rm -rf $file    2> /dev/null
-rm -rf $fileOut 2> /dev/null
-rm -rf $tmp     2> /dev/null
+target="$1"
+Type="$2"
 
 
-## Script begin
+
+
+
+###
+### functions section
+###
+cleanFiles()
+{
+    rm -rf $tmpA    2> /dev/null
+    rm -rf $tmpB    2> /dev/null
+    rm -rf $result  2> /dev/null
+}
+helpMessage()
+{
+    echo "Usage:"; echo " "
+    echo "bash unusedCodeSearch.sh --cxx macro    - Looking for macros in cxx files"
+    echo "bash unusedCodeSearch.sh --hxx macro    - Looking for macros in hxx files"
+    echo "bash unusedCodeSearch.sh --cxx method   - Looking for methods in cxx files"
+    echo "bash unusedCodeSearch.sh --hxx method   - Looking for methods in hxx files"
+    echo "bash unusedCodeSearch.sh --help         - Show this help"
+}
+collector()
+{
+    find $path -iname $Type | xargs -L10 git grep $Type | cut -d"$char" | cut -c8-200 > $tmpA
+}
+
+
+
+
+
+###
+### Script begin
+###
+
+# Remove possible old files
+cleanFiles
+
+if [ "$target" == "--hxx" ]; then
+    if [ "$Type" == "macro" ]; then
+
+        Type="#define"
+        char="#"
+        collector
+
+    elif [ "$Type" == "method" ]; then
+        Type="Incomplete..."
+    else
+        echo "Syntax error!"
+        helpMessage
+    fi
+elif [ "$target" == "--cxx" ]; then
+    cxx
+elif [ "$target" == "--help" ]; then
+    helpMessage
+else
+    echo "Syntax error!"
+    helpMessage
+fi
+
 
 # collect all macros defined in .hxx files
 find $path -iname "*.*xx" | xargs -L10 grep "#define" | cut -d'#' -f2 | cut -c8-200 > $file
@@ -66,7 +125,7 @@ do
 		echo "Declared by: $first_use" >> $fileOut
 	fi
 
-	# Verify if the source of the current macro is a cxx file
+    # Verify if the source of the current macro is a cxx file
 	extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
 	if [ "$extension" == "cxx" ]; then
 		how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
@@ -101,7 +160,7 @@ do
 			if [ "$1" != "macros" ]; then
 				echo "Wich mean the macro can be removed! :)" >> $tmp
 			else
-				echo $current_macro in $first_use can be removed >> $fileOut
+				echo "$current_macro in $first_use can be removed" >> $fileOut
 			fi
 		fi
 	fi
