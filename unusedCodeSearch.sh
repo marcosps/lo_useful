@@ -57,9 +57,41 @@ helpMessage()
     echo "bash unusedCodeSearch.sh --hxx method   - Looking for methods in hxx files"
     echo "bash unusedCodeSearch.sh --help         - Show this help"
 }
-collector()
+allMacroCollector()
 {
-    find $path -iname $Type | xargs -L10 git grep $Type | cut -d"$char" | cut -c8-200 > $tmpA
+    find $path -iname $Type | xargs -L10 git grep $Type | cut -d'#' | cut -c8-200 > $tmpA
+}
+allMacroSelector()
+{
+    x=0
+    lns=$(wc -l $tmpA)
+    y=$(expr "$lns" : '\([0-9]*\')
+    while [ "$x" -lt "$y" ];
+    do
+        let x=x+1
+        current_macro="$(head -n $x $tmpA | tail -n 1)"
+
+        # if exist an '\' replace for an blank space
+        current_macro=$(echo "${current_macro/\\/ }")
+
+        # if current_macro has 2 words continue the script else go to the begin of while
+        if [ "$(echo $current_macro | wc -l)" == "1" ]; then
+            continue
+        fi
+
+        first_use=$(git grep -R "$current_macro" * | cut -d':' -f1)
+
+        just_macro=$(echo $current_macro | cut -d' ' -f1)
+
+        # Verify if the source of the current macro is a cxx file
+        extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
+        if [ "$extension" == "cxx" ]; then
+            how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
+            if [ "$how_many" == "1" ]; then
+                # continuar aqui...
+            fi
+        fi
+    done
 }
 
 
@@ -74,14 +106,20 @@ collector()
 cleanFiles
 
 if [ "$target" == "--hxx" ]; then
+
     if [ "$Type" == "macro" ]; then
 
         Type="#define"
-        char="#"
-        collector
+        allMacroCollector
+
+        
 
     elif [ "$Type" == "method" ]; then
-        Type="Incomplete..."
+
+        echo "Come back later! :)"
+        
+        return 0
+
     else
         echo "Syntax error!"
         helpMessage
