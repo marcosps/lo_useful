@@ -44,9 +44,15 @@ Type="$2"
 ###
 cleanFiles()
 {
-    rm -rf $tmpA    2> /dev/null
-    rm -rf $tmpB    2> /dev/null
-    rm -rf $result  2> /dev/null
+    if [ -f $tmpA ]; then
+        rm -rf $tmpA    2> /dev/null
+    fi
+    if [ -f $tmpB ]; then
+        rm -rf $tmpB    2> /dev/null
+    fi
+    if [ -f $result ]; then
+        rm -rf $result  2> /dev/null
+    fi
 }
 helpMessage()
 {
@@ -59,13 +65,14 @@ helpMessage()
 }
 allMacroCollector()
 {
-    find $path -iname $Type | xargs -L10 git grep $Type | cut -d'#' | cut -c8-200 > $tmpA
+    find $path -iname $searchExtension | xargs -L10 git grep $Type | cut -d'#' -f2 | cut -c8-200 > $tmpA
 }
-allMacroSelector()
+cxxMacroSelector()
 {
     x=0
-    lns=$(wc -l $tmpA)
-    y=$(expr "$lns" : '\([0-9]*\')
+    #lns=$(wc -l $tmpA)
+    #y=$(expr "$lns" : '\([0-9]*\')
+    y=$(cat $tmpA | wc -l)
     while [ "$x" -lt "$y" ];
     do
         let x=x+1
@@ -75,20 +82,34 @@ allMacroSelector()
         current_macro=$(echo "${current_macro/\\/ }")
 
         # if current_macro has 2 words continue the script else go to the begin of while
-        if [ "$(echo $current_macro | wc -l)" == "1" ]; then
+        if [ "$(echo $current_macro | wc -w)" == "1" ]; then
             continue
         fi
 
-        first_use=$(git grep -R "$current_macro" * | cut -d':' -f1)
+        first_use=$(git grep "$current_macro" * | cut -d':' -f1) #era grep -R
 
         just_macro=$(echo $current_macro | cut -d' ' -f1)
+
+        echo "Macro: $current_macro" >> $result
+        echo "Declared by: $first_use" >> $result
 
         # Verify if the source of the current macro is a cxx file
         extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
         if [ "$extension" == "cxx" ]; then
             how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
             if [ "$how_many" == "1" ]; then
-                # continuar aqui...
+                echo "Used in the file $how_many time (the #define line)" >> $result
+                echo "Which mean the macro can be removed! :)" >> $result
+                echo " " >> $result
+                echo "---" >> $result
+                echo " " >> $result
+                echo " " >> $result
+            else
+                echo "Used in the file $how_many times" >> $result
+                echo " " >> $result
+                echo "---" >> $result
+                echo " " >> $result
+                echo " " >> $result
             fi
         fi
     done
@@ -110,22 +131,46 @@ if [ "$target" == "--hxx" ]; then
     if [ "$Type" == "macro" ]; then
 
         Type="#define"
-        allMacroCollector
+        searchExtension="*.hxx"
+        #allMacroCollector
 
         
 
     elif [ "$Type" == "method" ]; then
 
-        echo "Come back later! :)"
+        echo "Not done yet. Come back later! :)"
         
-        return 0
+        exit
 
     else
         echo "Syntax error!"
         helpMessage
     fi
 elif [ "$target" == "--cxx" ]; then
-    cxx
+    
+    if [ "$Type" == "macro" ]; then
+
+        Type="#define"
+        searchExtension="*.cxx"
+        allMacroCollector
+        cxxMacroSelector
+
+        if [ -f $result ]; then
+            awk 'NR==1{print "Search Result:\n[Type [q] to exit Up,Down,PgUp,PgDown to navigate]\n"}1' $result | less
+        fi
+
+        exit
+
+    elif [ "$Type" == "method" ]; then
+
+        echo "Not done yet. Come back later! :)"
+
+        exit
+
+    else
+        echo "Syntax error!"
+        helpMessage
+    fi
 elif [ "$target" == "--help" ]; then
     helpMessage
 else
@@ -135,90 +180,90 @@ fi
 
 
 # collect all macros defined in .hxx files
-find $path -iname "*.*xx" | xargs -L10 grep "#define" | cut -d'#' -f2 | cut -c8-200 > $file
+#find $path -iname "*.*xx" | xargs -L10 grep "#define" | cut -d'#' -f2 | cut -c8-200 > $
 
 # looping to look for each macro listed in the file above and in the end
 # save a list with the search result
-x=0
-lns=$(wc -l $file)
-y=$(expr "$lns" : '\([0-9]*\)')
-while [ "$x" -lt "$y" ];
-do
-    let x=x+1
-    current_macro="$(head -n $x $file | tail -n 1)"
-    # if exist an '\', replace for an blank space
-    current_macro=$(echo "${current_macro/\\/ }")
-    # if current_macro has 2 words continue the script else go to the begin of while
-    if [ "$(echo $current_macro | wc -w)" == "1" ]; then
-        continue
-    fi
-
-    first_use=$(grep -R "$current_macro" * | cut -d':' -f1)
-
-    just_macro=$(echo $current_macro | cut -d' ' -f1)
-
-	# the $1 means that we jsut want to know the macros that can be removed
-	if [ "$1" != "macros" ]; then
-		echo "Macro: $current_macro" >> $fileOut
-		echo "Declared by: $first_use" >> $fileOut
-	fi
-
-    # Verify if the source of the current macro is a cxx file
-	extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
-	if [ "$extension" == "cxx" ]; then
-		how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
-		if [ "$how_many" == "1" ]; then
-
-			if [ "$1" != "macros" ]; then
-				echo "Used in the file $how_many time (the #define line)" >> $fileOut
-				echo "Wich mean the macro can be removed! :)" >> $fileOut
-			else
-				echo $current_macro in $first_use can be removed >> $fileOut
-			fi
-		else
-			if [ "$1" != "macros" ];
-			then
-				echo "Used in the file $how_many times" >> $fileOut
-			fi
-		fi
-
-	else
-		# look for any use of the macro
-		grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 > $tmp
-
-		how_many=$(cat $tmp | wc -l)
-		how_many=$(($how_many-1))
-
-		if [ "$1" != "macros" ]; then
-			echo "Number of files using it: $how_many" >> $fileOut
-			grep -v "$first_use" $tmp >> $fileOut
-		fi
-
-		if [ "$how_many" == "0" ]; then
-			if [ "$1" != "macros" ]; then
-				echo "Wich mean the macro can be removed! :)" >> $tmp
-			else
-				echo "$current_macro in $first_use can be removed" >> $fileOut
-			fi
-		fi
-	fi
-
-	if [ "$1" != "macros" ]; then
-		echo " " >> $fileOut
-		echo "---" >> $fileOut
-		echo " " >> $fileOut
-		echo " " >> $fileOut
-	fi
-done
-
-if [ -f $tmp ]; then
-	rm $tmp
-fi
-
-if [ -f $file ]; then
-	rm $file
-fi
-
-if [ -f $fileOut ]; then
-	awk 'NR==1{print "Search Result:\n[Type <q> to exit Up,Down,PgUp,PgDown to navigate]\n"}1' $fileOut | less
-fi
+#x=0
+#lns=$(wc -l $file)
+#y=$(expr "$lns" : '\([0-9]*\)')
+#while [ "$x" -lt "$y" ];
+#do
+#    let x=x+1
+#    current_macro="$(head -n $x $file | tail -n 1)"
+#    # if exist an '\', replace for an blank space
+#    current_macro=$(echo "${current_macro/\\/ }")
+#    # if current_macro has 2 words continue the script else go to the begin of while
+#    if [ "$(echo $current_macro | wc -w)" == "1" ]; then
+#        continue
+#    fi
+#
+#    first_use=$(grep -R "$current_macro" * | cut -d':' -f1)
+#
+#    just_macro=$(echo $current_macro | cut -d' ' -f1)
+#
+#	# the $1 means that we jsut want to know the macros that can be removed
+#	if [ "$1" != "macros" ]; then
+#		echo "Macro: $current_macro" >> $fileOut
+#		echo "Declared by: $first_use" >> $fileOut
+#	fi
+#
+#    # Verify if the source of the current macro is a cxx file
+#	extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
+#	if [ "$extension" == "cxx" ]; then
+#		how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
+#		if [ "$how_many" == "1" ]; then
+#
+#			if [ "$1" != "macros" ]; then
+#				echo "Used in the file $how_many time (the #define line)" >> $fileOut
+#				echo "Wich mean the macro can be removed! :)" >> $fileOut
+#			else
+#				echo $current_macro in $first_use can be removed >> $fileOut
+#			fi
+#		else
+#			if [ "$1" != "macros" ];
+#			then
+#				echo "Used in the file $how_many times" >> $fileOut
+#			fi
+#		fi
+#
+#	else
+#		# look for any use of the macro
+#		grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 > $tmp
+#
+#		how_many=$(cat $tmp | wc -l)
+#		how_many=$(($how_many-1))
+#
+#		if [ "$1" != "macros" ]; then
+#			echo "Number of files using it: $how_many" >> $fileOut
+#			grep -v "$first_use" $tmp >> $fileOut
+#		fi
+#
+#		if [ "$how_many" == "0" ]; then
+#			if [ "$1" != "macros" ]; then
+#				echo "Wich mean the macro can be removed! :)" >> $tmp
+#			else
+#				echo "$current_macro in $first_use can be removed" >> $fileOut
+#			fi
+#		fi
+#	fi
+#
+#	if [ "$1" != "macros" ]; then
+#		echo " " >> $fileOut
+#		echo "---" >> $fileOut
+#		echo " " >> $fileOut
+#		echo " " >> $fileOut
+#	fi
+#done
+#
+#if [ -f $tmp ]; then
+#	rm $tmp
+#fi
+#
+#if [ -f $file ]; then
+#	rm $file
+#fi
+#
+#if [ -f $fileOut ]; then
+#	awk 'NR==1{print "Search Result:\n[Type <q> to exit Up,Down,PgUp,PgDown to navigate]\n"}1' $fileOut | less
+#fi
