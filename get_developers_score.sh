@@ -15,8 +15,8 @@
 
 for name in "Marcos Paulo de Souza" "José Guilherme Vanz" "Olivier Hallot" "Ricardo Montania"
 do
-	echo $name
-	git log --numstat --pretty="%H" --author="$name" | awk 'NF==3 {plus+=$1; minus+=$2}; END \
+	echo $name": $(git log --oneline --author="$name" | wc -l) commits"
+	git log --numstat --oneline --pretty="%H" --author="$name" | awk 'NF==3 {plus+=$1; minus+=$2}; END \
 								{printf("+%d, -%d\n", plus, minus)}'
 
 done
