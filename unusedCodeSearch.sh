@@ -98,7 +98,7 @@ cxxMacroSelector()
         if [ "$extension" == "cxx" ]; then
 
             # remove the all between () of a macro
-            just_macro=$(sed -r "s/\(.*\)//g" <<< "$just_macro")
+            just_macro=$(sed -r "s/\(.*//g" <<< "$just_macro")
 
             how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
             if [ "$how_many" == "1" ]; then
