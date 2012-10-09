@@ -90,15 +90,19 @@ cxxMacroSelector()
 
         just_macro=$(echo $current_macro | cut -d' ' -f1)
 
-        echo "Macro: $current_macro" >> $result
+        # remove the all between () of a macro
+        just_macro=$(sed -r "s/\(.*//g" <<< "$just_macro")
+
+        # remove all after a space, leaving just the macro name
+        just_macro=$(sed -r "s/ .*//g" <<< "$just_macro")
+
+        echo "Macro: $just_macro" >> $result
         echo "Declared by: $first_use" >> $result
 
         # Verify if the source of the current macro is a cxx file
         extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
         if [ "$extension" == "cxx" ]; then
 
-            # remove the all between () of a macro
-            just_macro=$(sed -r "s/\(.*//g" <<< "$just_macro")
 
             how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
             if [ "$how_many" == "1" ]; then
