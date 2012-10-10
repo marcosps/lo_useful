@@ -65,7 +65,7 @@ helpMessage()
 }
 allMacroCollector()
 {
-    find $path -iname $searchExtension | xargs -L10 git grep $Type | cut -d'#' -f2 | cut -c8-200 > $tmpA
+    find "$path" -iname "$searchExtension" | xargs -L10 git grep "$Type" | cut -d'#' -f2 | cut -c8-200 > $tmpA
 }
 cxxMacroSelector()
 {
