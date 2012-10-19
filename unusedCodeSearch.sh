@@ -65,7 +65,7 @@ helpMessage()
 }
 allMacroCollector()
 {
-    find $path -iname $searchExtension | xargs -L10 git grep $Type | cut -d'#' -f2 | cut -c8-200 > $tmpA
+    find "$path" -iname "$searchExtension" | xargs -L10 git grep "$Type" | cut -d'#' -f2 | cut -c8-200 > $tmpA
 }
 cxxMacroSelector()
 {
@@ -86,16 +86,27 @@ cxxMacroSelector()
             continue
         fi
 
-        first_use=$(git grep "$current_macro" * | cut -d':' -f1) #era grep -R
-
         just_macro=$(echo $current_macro | cut -d' ' -f1)
 
-        echo "Macro: $current_macro" >> $result
-        echo "Declared by: $first_use" >> $result
+        # remove the all between () of a macro
+        just_macro=$(sed -r "s/\(.*//g" <<< "$just_macro")
+
+        # remove all after a space, leaving just the macro name
+        just_macro=$(sed -r "s/ .*//g" <<< "$just_macro")
+
+        first_use=$(git grep "$just_macro" * | cut -d':' -f1) #era grep -R
 
         # Verify if the source of the current macro is a cxx file
         extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
+<<<<<<< HEAD
         if [ "$(echo $extension | grep cxx | wc -l)" != "0" ]; then
+=======
+        if [ "$extension" == "cxx" ]; then
+
+            echo "Macro: $just_macro" >> $result
+            echo "Declared by: $first_use" >> $result
+
+>>>>>>> 9cecbe6aeed6d6a822c8a62cff3d5637c79869e3
             how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
             if [ "$how_many" == "1" ]; then
                 echo "Used in the file $how_many time (the #define line)" >> $result
