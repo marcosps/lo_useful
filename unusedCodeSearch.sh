@@ -67,11 +67,27 @@ allMacroCollector()
 {
     find "$path" -iname "$searchExtension" | xargs -L10 git grep "$Type" | cut -d'#' -f2 | cut -c8-200 > $tmpA
 }
+removeDuplicates()
+{
+    x=0
+    y=$(cat $tmpA | wc -l)
+    while [ "$x" -lt "$y" ];
+    do
+        let x=x+1
+        current_macro="$(head -n $x $tmpA | tail -n 1)"
+
+        if [ "$(cat $tmpA | grep $current_macro | wc -l)" != "1" ]; then
+            sed -i "/$current_macro/d" $tmpA
+            echo "$current_macro" > /tmp/tmp.txt
+            cat $tmpA >> /tmp/tmp.txt
+            rm $tmpA
+            mv /tmp/tmp.txt $tmpA
+        fi
+    done
+}
 cxxMacroSelector()
 {
     x=0
-    #lns=$(wc -l $tmpA)
-    #y=$(expr "$lns" : '\([0-9]*\')
     y=$(cat $tmpA | wc -l)
     while [ "$x" -lt "$y" ];
     do
@@ -81,7 +97,7 @@ cxxMacroSelector()
         # if exist an '\' replace for an blank space
         current_macro=$(echo "${current_macro/\\/ }")
 
-        # if current_macro has 2 words continue the script else go to the begin of while
+        # if current_macro has 2 words continue the script else continue, go to the begin of while
         if [ "$(echo $current_macro | wc -w)" == "1" ]; then
             continue
         fi
@@ -155,8 +171,13 @@ elif [ "$target" == "--cxx" ]; then
     if [ "$Type" == "macro" ]; then
 
         Type="#define"
+
         searchExtension="*.cxx"
+
         allMacroCollector
+
+        removeDuplicates
+
         cxxMacroSelector
 
         if [ -f $result ]; then
