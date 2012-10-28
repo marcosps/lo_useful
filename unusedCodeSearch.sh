@@ -98,15 +98,11 @@ cxxMacroSelector()
 
         # Verify if the source of the current macro is a cxx file
         extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)
-<<<<<<< HEAD
         if [ "$(echo $extension | grep cxx | wc -l)" != "0" ]; then
-=======
-        if [ "$extension" == "cxx" ]; then
 
             echo "Macro: $just_macro" >> $result
             echo "Declared by: $first_use" >> $result
 
->>>>>>> 9cecbe6aeed6d6a822c8a62cff3d5637c79869e3
             how_many=$(grep -R "$just_macro" $path/* | cut -d':' -f1 | wc -l)
             if [ "$how_many" == "1" ]; then
                 echo "Used in the file $how_many time (the #define line)" >> $result
