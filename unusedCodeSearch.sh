@@ -62,10 +62,11 @@ helpMessage()
     echo "Options"
     echo " --cxx     - Search in cxx files"
     echo " --hxx     - Search in hxx files"
+    echo " --help    - Show this help"
     echo " "
     echo "Args"
-    echo " macro    - Search for any macro"
-    echo " method   - Search for any methods"
+    echo " macro     - Search for any macro"
+    echo " method    - Search for any methods"
 }
 allMacroCollector()
 {
