@@ -32,19 +32,3 @@ Bugs 3:
 [ ] Done without bugs
 Bugs 4:
  - ...
-
-5. Search for an specific macro informed by user
-[x] Standing by
-[ ] Started but not done yet
-[ ] Done with bugs
-[ ] Done without bugs
-Bugs 5:
- - ...
-
-6. Search for an specific method informed by user
-[x] Standing by
-[ ] Started but not done yet
-[ ] Done with bugs
-[ ] Done without bugs
-Bugs 6:
- - ...

@@ -56,12 +56,16 @@ cleanFiles()
 }
 helpMessage()
 {
-    echo "Usage:"; echo " "
-    echo "bash unusedCodeSearch.sh --cxx macro    - Looking for macros in cxx files"
-    echo "bash unusedCodeSearch.sh --hxx macro    - Looking for macros in hxx files"
-    echo "bash unusedCodeSearch.sh --cxx method   - Looking for methods in cxx files"
-    echo "bash unusedCodeSearch.sh --hxx method   - Looking for methods in hxx files"
-    echo "bash unusedCodeSearch.sh --help         - Show this help"
+    echo "Usage:";
+    echo " "
+    echo "bash path/unusedCodeSearch.sh [option] [args]"
+    echo "Options"
+    echo " --cxx     - Search in cxx files"
+    echo " --hxx     - Search in hxx files"
+    echo " "
+    echo "Args"
+    echo " macro    - Search for any macro"
+    echo " method   - Search for any methods"
 }
 allMacroCollector()
 {
