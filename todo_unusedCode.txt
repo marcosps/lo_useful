@@ -1,0 +1,50 @@
+TODO list script unusedCodeSearch.sh
+
+1. Search for any macro in cxx files and show how many times it's been used 
+[ ] Standing by
+[ ] Started but not done yet
+[x] Done with bugs
+[ ] Done without bugs
+Bugs 1:
+ - Duplicate values
+ - Another bug
+
+2.  Search for any macro in hxx files and show which files are using it
+[x] Standing by
+[ ] Started but not done yet
+[ ] Done with bugs
+[ ] Done without bugs
+Bugs 2:
+ - ...
+
+3. Search for any method in cxx files and show
+[x] Standing by
+[ ] Started but not done yet
+[ ] Done with bugs
+[ ] Done without bugs
+Bugs 3:
+ - ...
+
+4. Search for any method in hxx files and show
+[x] Standing by
+[ ] Started but not done yet
+[ ] Done with bugs
+[ ] Done without bugs
+Bugs 4:
+ - ...
+
+5. Search for an specific macro informed by user
+[x] Standing by
+[ ] Started but not done yet
+[ ] Done with bugs
+[ ] Done without bugs
+Bugs 5:
+ - ...
+
+6. Search for an specific method informed by user
+[x] Standing by
+[ ] Started but not done yet
+[ ] Done with bugs
+[ ] Done without bugs
+Bugs 6:
+ - ...
