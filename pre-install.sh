@@ -9,6 +9,33 @@ final()
     echo "Principais dependencias instaladas!"
 }
 
+clone()
+{
+    echo " "
+    read -p "Deseja clonar o repositorio agora? (S) ou (N): " resp
+    if [ "$resp" == "n" ] || [ "$resp" == "N" ]; then
+        exit
+    elif [ "$resp" == "s" ] || [ "$resp" == "S" ]; then
+        echo " "
+        echo "Digite a pasta de destino (caso nao exista, sera criada) com caminho absoluto"
+        read -p "Ou pressione <enter> para usar a pasta padrao ($HOME):" pasta
+
+        if [ "$pasta" == "" ]; then
+            cd $HOME
+            echo "Clonando o repositorio 'core' para a pasta $HOME/libo"
+        else
+            if [ -d "$pasta" ]; then
+                mkdir -p "$pasta"
+            fi
+        fi
+        
+        cd $pasta
+        echo "Clonando o repositorio 'core' para a pasta $pasta"
+
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Clonagem concluida! Tudo pronto."
+    fi
+}
+
 ##
 ## Script begin
 ##
@@ -26,6 +53,7 @@ if [ "$distro" == "1" ]; then
     sudo apt-get build-dep libreoffice
     sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen
     final
+    clone
 elif [ "$distro" == "2" ]; then
     echo "Instalacao dos pre-requisitos em ambiente Fedora"
     echo " "
@@ -33,6 +61,7 @@ elif [ "$distro" == "2" ]; then
     sudo yum-builddep libreoffice
     sudo yum install git libgnomeui-devel gawk junit doxygen
     final
+    clone
 else
     echo "Desculpe, opcao invalida!"
 fi
