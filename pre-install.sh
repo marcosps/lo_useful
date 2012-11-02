@@ -22,7 +22,7 @@ clone()
 
         if [ "$pasta" == "" ]; then
             cd $HOME
-            echo "Clonando o repositorio 'core' para a pasta $HOME/libo"
+            pasta=$HOME
         else
             if [ -d "$pasta" ]; then
                 mkdir -p "$pasta"
