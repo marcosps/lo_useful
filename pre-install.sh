@@ -30,7 +30,7 @@ clone()
         fi
         
         cd $pasta
-        echo "Clonando o repositorio 'core' para a pasta $pasta"
+        echo "Clonando o repositorio 'core' para a pasta $pasta/libo"
 
         git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Clonagem concluida! Tudo pronto."
     fi
