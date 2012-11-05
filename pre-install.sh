@@ -49,7 +49,7 @@ clone()
 ##
 
 path="$1"
-# Testa a pasta destino informada pelo usuario e se estiver ok, continua
+# Testa se a pasta destino informada pelo usuario existe, e se estiver ok, continua
 testPath
 
 clear
