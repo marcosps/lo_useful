@@ -17,10 +17,7 @@ clone()
     elif [ "$resp" == "s" ] || [ "$resp" == "S" ]; then
         echo " "
         echo "Digite a pasta de destino (caso nao exista, sera criada) com caminho absoluto"
-        read -p "Ou pressione <enter> para usar a pasta padrao ($HOME): " pasta
-
-        # remove a barra do final, caso tenha sido informada
-
+        read -p "Ou pressione <enter> para usar a pasta padrao ($HOME/libo): " pasta
 
         if [ "$pasta" == "" ]; then
             pasta=$HOME
@@ -51,16 +48,16 @@ if [ "$distro" == "1" ]; then
     echo "Instalacao dos pre-requisitos em ambiente Debian/Ubuntu"
     echo " "
     sudo apt-get update
-    sudo apt-get build-dep libreoffice
-    sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen
+    sudo apt-get build-dep libreoffice -y
+    sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen -y
     final
     clone
 elif [ "$distro" == "2" ]; then
     echo "Instalacao dos pre-requisitos em ambiente Fedora"
     echo " "
     sudo yum update
-    sudo yum-builddep libreoffice
-    sudo yum install git libgnomeui-devel gawk junit doxygen
+    sudo yum-builddep libreoffice -y
+    sudo yum install git libgnomeui-devel gawk junit doxygen -y
     final
     clone
 else
