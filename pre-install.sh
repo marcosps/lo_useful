@@ -18,10 +18,12 @@ clone()
     elif [ "$resp" == "s" ] || [ "$resp" == "S" ]; then
         echo " "
         echo "Digite a pasta de destino (caso nao exista, sera criada) com caminho absoluto"
-        read -p "Ou pressione <enter> para usar a pasta padrao ($HOME):" pasta
+        read -p "Ou pressione <enter> para usar a pasta padrao ($HOME): " pasta
+
+        # remove a barra do final, caso tenha sido informada
+
 
         if [ "$pasta" == "" ]; then
-            cd $HOME
             pasta=$HOME
         else
             if [ -d "$pasta" ]; then
@@ -30,9 +32,9 @@ clone()
         fi
         
         cd $pasta
-        echo "Clonando o repositorio 'core' para a pasta $pasta/libo"
+        echo "Clonando para a pasta 'libo', em: $pasta"
 
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Clonagem concluida! Tudo pronto."
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Concluido!"
     fi
 }
 
