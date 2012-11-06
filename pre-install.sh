@@ -1,90 +1,88 @@
 #!/bin/bash
 
 ###
-### LEIA-ME
+### README
 ###
 ### Script: pre-install.sh
-### Descricao: Prepara um ambiente Debian like ou RedHat like para o processo
-###            de compilacao do LibreOffice. Com opcoes de informar a pasta
+### Description: Prepara um ambiente Debian like ou RedHat like para o processo
+###            de compilacao do LibreOffice. Options de informar a pasta
 ###            onde ficarao os fontes e opcao de clonar ou nao
 
-### Modo de uso:
-### bash pre-install.sh                 - Instala as deps e clona para a pasta $HOME/libo
-### bash pre-install.sh /algum/caminho  - Instala as deps e clona para o caminho informado
-### bash pre-install.sh --no-clone      - Instala as deps e nao faz git-clone
-### bash pre-install.sh --help          - Mostra as informacoes acima
+### Functions:
+### bash pre-install.sh                 - Dep install and clone to $HOME/libo folder
+### bash pre-install.sh /some/folder    - Dep install and clone in the received folder
+### bash pre-install.sh --no-clone      - Only dep install, don't clone
+### bash pre-install.sh --help          - Show help message
 
 
 
 
 ###
-### Secao de funcoes
+### Function section
 ###
 
 ###
-### Informa o modo de uso e sintaxe
+### Usage and syntax
 ### 
-modoDeUso()
+usageSyntax()
 {
     echo " "
-    echo "Modo de uso:"; echo " ";
-    echo "bash pre-install.sh [parametro]"; echo " "
+    echo "Usage:"; echo " ";
+    echo "bash pre-install.sh [option]"; echo " "
 
-    echo "Parametros:"; echo " "
-    echo " /caminho/pasta/    - Prepara o ambiente e faz o clone na pasta /caminho/pasta/"
-    echo " --no-clone         - Prepara o ambiente e nao faz o clone"
-    echo " --help             - Informacoes de uso"; echo " ";
-    echo "Se nenhum parametro for informado, sera preparado o ambiente"
-    echo " e sera feito o clone na pasta $HOME/libo/"
+    echo "Options:"; echo " "
+    echo " /some/folder/    - Dep install and clone in /some/folder/"
+    echo " --no-clone       - Only dep install, don't clone"
+    echo " --help           - Show this help message"; echo " ";
+    echo "If no parameters was informed, whill be installed the deps"
+    echo " and git clone in $HOME/libo/ folder"
 }
 
 ###
-### Funcao que age de acordo com o parametro informado
+### Function that works according with the parameter received
 ###
-acaoPorParametro()
+actionByParameter()
 {
     ###
-    ### Se o parametro for --no-clone, termina
+    ### If the parameter is --no-clone, exit
     ###
     if [ "$param" == "--no-clone" ]; then
         exit
     fi
 
     ###
-    ### Se o parametro for vazio, cria a pasta libo em $HOME e clona
+    ### If the parameter is empty, clone for the $HOME/libo folder
     ###
     if [ "$param" == "" ]; then
         cd $HOME
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Concluido!"
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
         exit
     fi
 
     ###
-    ### Se o parametro for uma pasta com permissao de escrita, cria a pasta
-    ### libo no caminho especificado e clona
+    ### If the parameter is a valid and writable folder, clone there
     ###
     if [ -d "$param" ]; then
         cd "$param"
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Concluido!"
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
         exit
 
     ###
-    ### Se nao, tenta criar e entao clonar
+    ### If not, try create and then to clone
     ###
     else
         mkdir -p $param
 
         ###
-        ### Verifica novamente se a pasta existe, se nao exite
-        ###  ocorreu um erro de permissao ao criar a pasta.
-        ###  Informa erro e sai.
+        ### Verify again if the folder exists, and if not
+        ###  show an error message and exit.
         ###
         if [ -d "$param" ]; then
             cd $param
             git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Concluido!"
             exit
         else
-            echo "Nao foi possivel criar a pasta '$param'"
+            echo "Unable to create '$param' folder"
             exit
         fi
     fi
@@ -92,27 +90,27 @@ acaoPorParametro()
 
 
 ###
-### Inicio do Script
+### Script Begin
 ###
 
 ###
-### Recebe o primeiro parametro informado
+### Receive the first parameter informed
 ###
 param="$1"
 
 ###
-### Se existem dois parametros, informa erro de sintaxe e termina
+### if there is two parameters or more, exit. 
 ###
 if [ "$2" ]; then
-    echo "Erro de sintaxe!";
-    modoDeUso
+    echo "Syntax error!";
+    usageSyntax
     exit
 
 ###
-### Ou se o parametro eh --help, mostra tela de ajuda
+### Or if the parameter is --help, show the usage message
 ###
 elif [ "$param" == "--help" ]; then
-    modoDeUso
+    usageSyntax
     exit
 fi
 
@@ -120,44 +118,44 @@ fi
 
 
 ###
-### Inicio da parte interativa
+### Begin of the interactive section
 ###
 clear
-echo " Script de instalacao dos pre-requisitos para compilar o LO."
+echo " Script for deps installation to LibreOffice compilation."
 
 ###
-### Informa a pasta destino conforme o caso
+### Show the destiny folder according to the case
 ###
 if [ "$param" == "" ]; then
-    echo " Caminho (absoluto) da pasta onde sera clonado o repositorio libo: '$HOME'"; echo " "
+    echo " Path (absolute) for the folder where will be cloned the libo repository: '$HOME'"; echo " "
 elif [ "$param" == "--no-clone" ]; then
-    echo " Nao sera feito o clone!"
+    echo " Chosen option for don't clone!"
 else
-    echo " Caminho (absoluto) da pasta onde sera clonado o repositorio libo: '$param'"; echo " "
+    echo " Path (absolute) for the folder where will be cloned the libo repository: '$param'"; echo " "
 fi
 
 echo "1. Debian/Ubuntu"
 echo "2. Fedora"; echo " "
-read -p "Escolha sua distro: " distro
+read -p "Choice your distro: " distro
 
 if [ "$distro" == "1" ]; then
-    echo "Instalacao dos pre-requisitos em ambiente Debian/Ubuntu"
+    echo "Dep install for Debian/Ubuntu"
     echo " "
     sudo apt-get update
     sudo apt-get build-dep libreoffice -y
     sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen -y
 
-    acaoPorParametro
+    actionByParameter
 
 elif [ "$distro" == "2" ]; then
-    echo "Instalacao dos pre-requisitos em ambiente Fedora"
+    echo "Dep install for Fedora"
     echo " "
     sudo yum update
     sudo yum-builddep libreoffice -y
     sudo yum install git libgnomeui-devel gawk junit doxygen -y
     
-    acaoPorParametro
+    actionByParameter
 
 else
-    echo "Desculpe, opcao invalida!"
+    echo "Sorry, invalid option!"
 fi
