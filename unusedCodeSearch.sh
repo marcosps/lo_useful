@@ -70,7 +70,7 @@ helpMessage()
 }
 allMacroCollector()
 {
-    find "$path" -iname "$searchExtension" | xargs -L10 git grep "$Type" | cut -d'#' -f2 | cut -c8-200 > $tmpA
+    find "$path" -iname "$searchExtension" | xargs -L10 git grep -e ^"$Type" | cut -d'#' -f2 | cut -c8-200 > $tmpA
 }
 removeDuplicates()
 {
@@ -80,6 +80,12 @@ removeDuplicates()
     do
         let x=x+1
         current_macro="$(head -n $x $tmpA | tail -n 1)"
+
+	# remove all between ()
+        current_macro=$(sed -r "s/\(.*//g" <<< "$current_macro")
+
+        # remove all after a space, leaving just the macro name
+        current_macro=$(sed -r "s/ .*//g" <<< "$current_macro")
 
         if [ "$(cat $tmpA | grep $current_macro | wc -l)" != "1" ]; then
             sed -i "/$current_macro/d" $tmpA
