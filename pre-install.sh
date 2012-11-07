@@ -30,6 +30,10 @@
 ### Authors
 ### - Marcos Paulo de Souza ..(marcos.souza.org [at] gmail.com)
 ### - Ricardo Montania .......(ricardo.montania [at] gmail.com)
+### Testers
+### - Marcos Paulo de Souza ..(marcos.souza.org [at] gmail.com)
+### - Jose Guilherme Vanz ....(guilherme.sft [at] gmail.com)
+###
 
 
 
