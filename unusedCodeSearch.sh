@@ -121,7 +121,7 @@ cxxMacroSelector()
         # remove all after a space, leaving just the macro name
         just_macro=$(sed -r "s/ .*//g" <<< "$just_macro")
 
-        first_use=$(git grep "$just_macro" * | cut -d':' -f1) #era grep -R
+        first_use=$(git grep "$just_macro" * | cut -d':' -f1 | uniq) #era grep -R
 
         # Verify if the source of the current macro is a cxx file
         extension=$(grep -R -m 1 "$just_macro" $path/* | cut -d':' -f1 | cut -d'.' -f2)

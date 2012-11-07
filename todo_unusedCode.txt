@@ -6,7 +6,6 @@ TODO list script unusedCodeSearch.sh
 [x] Done with bugs
 [ ] Done without bugs
 Bugs 1:
- - Duplicate values
  - Another bug
 
 2.  Search for any macro in hxx files and show which files are using it
