@@ -121,7 +121,7 @@ fi
 ### Begin of the interactive section
 ###
 clear
-echo " Script for deps installation to LibreOffice compilation."
+echo " Script for dependencies installation to compile LibreOffice."
 
 ###
 ### Show the destiny folder according to the case
@@ -129,7 +129,7 @@ echo " Script for deps installation to LibreOffice compilation."
 if [ "$param" == "" ]; then
     echo " Path (absolute) for the folder where will be cloned the libo repository: '$HOME'"; echo " "
 elif [ "$param" == "--no-clone" ]; then
-    echo " Chosen option for don't clone!"
+    echo " Chosen option for don't clone!"; echo " "
 else
     echo " Path (absolute) for the folder where will be cloned the libo repository: '$param'"; echo " "
 fi
