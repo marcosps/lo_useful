@@ -3,16 +3,33 @@
 ###
 ### README
 ###
-### Script: pre-install.sh
-### Description: Prepara um ambiente Debian like ou RedHat like para o processo
-###            de compilacao do LibreOffice. Options de informar a pasta
-###            onde ficarao os fontes e opcao de clonar ou nao
+### Script.....: pre-install.sh
+### Description: Prepare linux systems Debian or RedHat based for the
+###              LibreOffice compilation process. Options for dependencies
+###              install and clone the source (standard), or just dependencies
+###              install.
 
 ### Functions:
 ### bash pre-install.sh                 - Dep install and clone to $HOME/libo folder
 ### bash pre-install.sh /some/folder    - Dep install and clone in the received folder
 ### bash pre-install.sh --no-clone      - Only dep install, don't clone
 ### bash pre-install.sh --help          - Show help message
+
+### LICENSE
+### This program is free software: you can redistribute it and/or modify
+### it under the terms of the GNU General Public License as published by
+### the Free Software Foundation.
+###
+### This program is distributed in the hope that it will be useful,
+### but WITHOUT ANY WARRANTY; without even the implied warranty of
+### MERCHANTABILITY of FITNESS FOR A PARTICULAR PURPOSE. See the
+### GNU General Public License for more details.
+### http://www.gnu.org/licenses
+
+###
+### Authors
+### - Marcos Paulo de Souza ..(marcos.souza.org [at] gmail.com)
+### - Ricardo Montania .......(ricardo.montania [at] gmail.com)
 
 
 
@@ -79,7 +96,7 @@ actionByParameter()
         ###
         if [ -d "$param" ]; then
             cd $param
-            git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Concluido!"
+            git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
             exit
         else
             echo "Unable to create '$param' folder"
@@ -87,6 +104,7 @@ actionByParameter()
         fi
     fi
 }
+
 
 
 ###
@@ -107,7 +125,7 @@ if [ "$2" ]; then
     exit
 
 ###
-### Or if the parameter is --help, show the usage message
+### Or if the parameter is --help, show the help message
 ###
 elif [ "$param" == "--help" ]; then
     usageSyntax
