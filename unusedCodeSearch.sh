@@ -72,6 +72,13 @@ allMacroCollector()
 {
     find "$path" -iname "$searchExtension" | xargs -L10 git grep -e ^"$Type" | cut -d'#' -f2 | cut -c8-200 > $tmpA
 }
+
+# used for find ifdefs
+allDefsCollector()
+{
+    find "$path" -iname "$searchExtension" | xargs -L10 git grep -e ^"$Type" | cut -d'#' -f2 | cut -c7-200 > $tmpA
+}
+
 removeDuplicates()
 {
     x=0
@@ -87,6 +94,9 @@ removeDuplicates()
         # remove all after a space, leaving just the macro name
         current_macro=$(sed -r "s/ .*//g" <<< "$current_macro")
 
+	# remove spaces before the ifdef name
+        current_macro=$(sed -e "s/ //g" <<< "$current_macro")
+
         if [ "$(cat $tmpA | grep $current_macro | wc -l)" != "1" ]; then
             sed -i "/$current_macro/d" $tmpA
             echo "$current_macro" > /tmp/tmp.txt
@@ -96,6 +106,32 @@ removeDuplicates()
         fi
     done
 }
+
+removeDoubleIfdefs()
+{
+    x=0
+    y=$(cat $tmpA | wc -l)
+    while [ "$x" -lt "$y" ];
+    do
+        let x=x+1
+        current_macro="$(head -n $x $tmpA | tail -n 1)"
+
+	# remove all between ()
+        current_macro=$(sed -r "s/\(.*//g" <<< "$current_macro")
+
+	# remove spaces before the ifdef name
+        current_macro=$(sed -e "s/ //g" <<< "$current_macro")
+
+        if [ "$(cat $tmpA | grep $current_macro | wc -l)" != "1" ]; then
+            sed -i "/$current_macro/d" $tmpA
+            echo "$current_macro" > /tmp/tmp.txt
+            cat $tmpA >> /tmp/tmp.txt
+            rm $tmpA
+            mv /tmp/tmp.txt $tmpA
+        fi
+    done
+}
+
 cxxMacroSelector()
 {
     x=0
@@ -149,7 +185,39 @@ cxxMacroSelector()
     done
 }
 
+allIfdefsCheck()
+{
+    x=0
+    y=$(cat $tmpA | wc -l)
 
+    # root of the LO
+    cd ..
+
+    while [ "$x" -lt "$y" ];
+    do
+        let x=x+1
+
+        current_ifdef="$(head -n $x $tmpA | tail -n 1)"
+
+        # if exist an '\' replace for an blank space
+        current_ifdef=$(echo "${current_ifdef/\\/ }")
+
+        just_ifdef=$(echo $current_ifdef | cut -d' ' -f1)
+
+        # remove the all between () of a macro
+        just_ifdef=$(sed -r "s/\(.*//g" <<< "$just_ifdef")
+
+        # remove all after a space, leaving just the macro name
+        just_ifdef=$(sed -r "s/ .*//g" <<< "$just_ifdef")
+
+        verify_define=$(git grep "$just_ifdef" * | grep "#define" | wc -l)
+
+	if [ $verify_define == 0 ]; then
+           echo "ifdef $just_ifdef without #define. This can be removed?"
+	fi
+        
+    done
+}
 
 
 
@@ -200,6 +268,18 @@ elif [ "$target" == "--cxx" ]; then
 
         echo "Not done yet. Come back later! :)"
         exit
+
+    elif [ "$Type" == "ifdef" ]; then
+
+        Type="#ifdef"
+
+        searchExtension="*"
+
+        allDefsCollector
+
+        removeDoubleIfdefs
+
+        allIfdefsCheck
 
     else
         echo "Syntax error!"
