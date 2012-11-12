@@ -67,6 +67,7 @@ helpMessage()
     echo "Args"
     echo " macro     - Search for any macro"
     echo " method    - Search for any methods"
+    echo " ifdef     - Search for any ifdef without #define"
 }
 allMacroCollector()
 {
@@ -170,17 +171,14 @@ cxxMacroSelector()
             if [ "$how_many" == "1" ]; then
                 echo "Used in the file $how_many time (the #define line)" >> $result
                 echo "Which mean the macro can be removed! :)" >> $result
-                echo " " >> $result
-                echo "---" >> $result
-                echo " " >> $result
-                echo " " >> $result
             else
                 echo "Used in the file $how_many times" >> $result
-                echo " " >> $result
-                echo "---" >> $result
-                echo " " >> $result
-                echo " " >> $result
             fi
+
+            echo " " >> $result
+            echo "---" >> $result
+            echo " " >> $result
+            echo " " >> $result
         fi
     done
 }
