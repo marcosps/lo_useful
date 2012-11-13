@@ -211,7 +211,11 @@ allIfdefsCheck()
         verify_define=$(git grep "$just_ifdef" * | grep "#define" | wc -l)
 
 	if [ $verify_define == 0 ]; then
-           echo "ifdef $just_ifdef without #define. This can be removed?"
+           verify_define=$(git grep "D$just_ifdef" * | wc -l)
+
+           if [ $verify_define == 0 ]; then
+               echo "ifdef $just_ifdef without #define. This can be removed?"
+           fi
 	fi
         
     done
