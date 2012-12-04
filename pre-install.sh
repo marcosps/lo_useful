@@ -58,21 +58,21 @@ gitClone()
 	
     if [ $clonedir == "" ]; then
         cd $HOME
-        #git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
         exit
     fi
 
     # Uses the directory informed.
     if [ -d "$clonedir" ]; then
         cd "$clonedir"
-        #git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
         exit
     else
         # If not exists, try create.
         mkdir -p $clonedir
         if [ -d "$clonedir" ]; then
             cd "$clonedir"
-            #git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
+            git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
             exit
         else
             echo "Unable to create '$clonedir' folder"
