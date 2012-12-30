@@ -21,6 +21,8 @@ sources="--cxx"
 # always return a list with 3 objects: extension, type, and path
 def validParameters():
     nParam = len(sys.argv)-1
+    sourceExtensions = ['any','c','h','cxx','hxx','java']
+    typeExtensions   = ['macro','method']
     paramReceived = []
 
     if not nParam or nParam > 3:
@@ -50,6 +52,7 @@ def validParameters():
             print ("Unrecognized option: " + paramB + ", try --help")
             sys.exit(1)
 
+        # validate the first options, -s, --source, -t and --type
         if paramA[0] != "-s" and paramA[0] != "--source":
             print ("Unrecognized option: " + sys.argv[1])
             sys.exit(1)
@@ -57,11 +60,29 @@ def validParameters():
         elif paramB[0] != "-t" and paramB[0] != "--type":
             print ("Unrecognized option: " + sys.argv[2])
             sys.exit(1)
-        else:
-            paramReceived.append(paramA[1])
-            paramReceived.append(paramB[1])
-            paramReceived.append(getPath())
-            return paramReceived
+
+        # validate the extension received
+        try:
+            index = sourceExtensions.index(paramA[1])
+        except ValueError:
+            index = 999
+        if index == 999:
+            print ("Unrecognized extension: " + paramA[1])
+            sys.exit(1)
+
+        # validate the type received
+        try:
+            index = typeExtensions.index(paramB[1])
+        except ValueError:
+            index = 999
+        if index == 999:
+            print ("Unrecognized type: " + paramB[1])
+            sys.exit(1)
+        
+        paramReceived.append(paramA[1])
+        paramReceived.append(paramB[1])
+        paramReceived.append(getPath())
+        return paramReceived
 
     elif nParam == 3:
         paramA = sys.argv[1].split('=')
@@ -94,6 +115,30 @@ def validParameters():
             sys.exit(1)
 
         elif paramA[0] == "-s" or paramA[0] == "--source" and paramB[0] == "-t" or paramB[0] == "--type" and paramC[0] == "-p" or paramC[0] == "--path":
+
+            # validate the extension received
+            try:
+                index = sourceExtensions.index(paramA[1])
+            except ValueError:
+                index = 999
+            if index == 999:
+                print ("Unrecognized extension: " + paramA[1])
+                sys.exit(1)
+
+            # validate the type received
+            try:
+                index = typeExtensions.index(paramB[1])
+            except ValueError:
+                index = 999
+            if index == 999:
+                print ("Unrecognized type: " + paramB[1])
+                sys.exit(1)
+
+            # validate the path received
+            if not os.path.isdir(paramC[1]):
+                print ("Invalid path: " + str(paramC[1]))
+                sys.exit(1)
+                
             paramReceived.append(paramA[1])
             paramReceived.append(paramB[1])
             paramReceived.append(paramC[1])
@@ -117,9 +162,6 @@ def createList(directory, pattern):
         fullList.append(filename)
 
     return fullList
-
-def cleanFiles():
-    print ("Under construction...")
 
 def helpMessage():
     print ("Usage:\n")
@@ -151,9 +193,9 @@ paramReceived = validParameters()
 searchIn      = paramReceived[0]
 searchFor     = paramReceived[1]
 searchWhere   = paramReceived[2]
-print ("Search in "  + str(searchIn)  + " files.")
-print ("Search for " + str(searchFor) + " type.")
-print ("Search in " + str(searchWhere) + " folder.\n")
+print ("Search in "  + str(searchIn)    + " files.")
+print ("Search for " + str(searchFor)   + " type.")
+print ("Search in "  + str(searchWhere) + " folder.\n")
 
 if searchIn == "any":
     searchIn = "*.*"
