@@ -22,7 +22,7 @@ sources="--cxx"
 def validParameters():
     nParam = len(sys.argv)-1
     sourceExtensions = ['any','c','h','cxx','hxx','java']
-    typeExtensions   = ['macro','method']
+    typeExtensions   = ['macros','classes']
     paramReceived = []
 
     if not nParam or nParam > 3:
@@ -172,8 +172,8 @@ def helpMessage():
     print (" -s  or  --source=java       - Search in java files only")
     print (" -s  or  --source=any        - Search in any file\n")
     print ("Types: Can be macro or method by now")
-    print (" -t  or  --type=macro        - Search for macros")
-    print (" -t  or  --type=method       - Search for methods\n")
+    print (" -t  or  --type=macros       - Search for macros")
+    print (" -t  or  --type=classes      - Search for methods\n")
     print ("Path: the path where you want looking for")
     print (" PS 1: Works fine for relative or absolut path.")
     print (" PS 2: If no path was informed, current folder will be used instead.\n")
@@ -182,6 +182,39 @@ def helpMessage():
     sys.exit(0)
     
 
+def removeEmpty(fullList, sourceType):
+    if sourceType == "macros":
+        lookFor = "#define"
+    elif sourceType == "classes":
+        lookFor = "class"
+
+    for eachFile in fullList:
+        aFile = open(eachFile, "r")
+        index = []
+        count = 0
+        for line in aFile:
+            if line.startswith( lookFor )
+                index.append(count)
+            count += 1
+
+        # verify until 3 lines before the #define line if there is an line starting with #if (#ifdef, #ifndef)
+        aFile.seek(0)
+        count = 0
+        index2 = []
+        for position in index:
+            count = position - 3
+            read = 0
+            while read < count:
+                t = aFile.readline()
+                read += 1
+            if "#if" in aFile.readline():
+                index2.append("it's on line 1")
+            elif "#if" in aFile.readline():
+                index2.append("it's on line 2")
+            elif "#if" in aFile.readline():
+                index2.append("it's on line 3")
+
+        # if index2 is empty, there is any #if before #define, and if not, ... miss code here :P
 
 
 
@@ -194,7 +227,7 @@ searchIn      = paramReceived[0]
 searchFor     = paramReceived[1]
 searchWhere   = paramReceived[2]
 print ("Search in "  + str(searchIn)    + " files.")
-print ("Search for " + str(searchFor)   + " type.")
+print ("Search for " + str(searchFor))
 print ("Search in "  + str(searchWhere) + " folder.\n")
 
 if searchIn == "any":
@@ -206,4 +239,15 @@ fullList = createList(searchWhere, searchIn)
 
 print (str(len(fullList)) + " files found!")
 
-# now: pegar cada arquivo e abrir conforme o caso!
+if searchFor == "macros":
+    print ("Now looking for macros.")
+    # remove files which don't have #defines
+    newList = removeEmpty(fullList, searchFor)
+
+elif searchFor == "classes":
+    print ("Now looking for methods.")
+    # remove files which don't have classes
+    newList = removeEmpty(fullList, searchFor)
+
+for filename in fullList:
+    xmlfiltercommon.hxx
