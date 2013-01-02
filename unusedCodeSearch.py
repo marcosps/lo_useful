@@ -21,7 +21,7 @@ sources="--cxx"
 # always return a list with 3 objects: extension, type, and path
 def validParameters():
     nParam = len(sys.argv)-1
-    sourceExtensions = ['any','c','h','cxx','hxx','java']
+    sourceExtensions = ['any','c','h','cxx','hxx','java','mm']
     typeExtensions   = ['macros','classes']
     paramReceived = []
 
@@ -54,29 +54,29 @@ def validParameters():
 
         # validate the first options, -s, --source, -t and --type
         if paramA[0] != "-s" and paramA[0] != "--source":
-            print ("Unrecognized option: " + sys.argv[1])
+            print ("Unrecognized option: " + sys.argv[1] + ", try --help")
             sys.exit(1)
 
         elif paramB[0] != "-t" and paramB[0] != "--type":
-            print ("Unrecognized option: " + sys.argv[2])
+            print ("Unrecognized option: " + sys.argv[2] + ", try --help")
             sys.exit(1)
 
         # validate the extension received
         try:
             index = sourceExtensions.index(paramA[1])
         except ValueError:
-            index = 999
-        if index == 999:
-            print ("Unrecognized extension: " + paramA[1])
+            index = -1
+        if index == -1:
+            print ("Unrecognized extension: " + paramA[1] + ", try --help")
             sys.exit(1)
 
         # validate the type received
         try:
             index = typeExtensions.index(paramB[1])
         except ValueError:
-            index = 999
-        if index == 999:
-            print ("Unrecognized type: " + paramB[1])
+            index = -1
+        if index == -1:
+            print ("Unrecognized type: " + paramB[1] + ", try --help")
             sys.exit(1)
         
         paramReceived.append(paramA[1])
@@ -103,15 +103,15 @@ def validParameters():
             sys.exit(1)
 
         if paramA[0] != "-s" and paramA[0] != "--source":
-            print ("Unrecognized option: " + sys.argv[1])
+            print ("Unrecognized option: " + sys.argv[1] + ", try --help")
             sys.exit(1)
 
         elif paramB[0] != "-t" and paramB[0] != "--type":
-            print ("Unrecognized option: " + sys.argv[2])
+            print ("Unrecognized option: " + sys.argv[2] + ", try --help")
             sys.exit(1)
 
         elif paramC[0] != "-p" and paramC[0] != "--path":
-            print ("Unrecognized option: " + sys.argv[3])
+            print ("Unrecognized option: " + sys.argv[3] + ", try --help")
             sys.exit(1)
 
         elif paramA[0] == "-s" or paramA[0] == "--source" and paramB[0] == "-t" or paramB[0] == "--type" and paramC[0] == "-p" or paramC[0] == "--path":
@@ -120,18 +120,18 @@ def validParameters():
             try:
                 index = sourceExtensions.index(paramA[1])
             except ValueError:
-                index = 999
-            if index == 999:
-                print ("Unrecognized extension: " + paramA[1])
+                index = -1
+            if index == -1:
+                print ("Unrecognized source extension: " + paramA[1] + ", try --help")
                 sys.exit(1)
 
             # validate the type received
             try:
                 index = typeExtensions.index(paramB[1])
             except ValueError:
-                index = 999
-            if index == 999:
-                print ("Unrecognized type: " + paramB[1])
+                index = -1
+            if index == -1:
+                print ("Unrecognized type: " + paramB[1] + ", try --help")
                 sys.exit(1)
 
             # validate the path received
@@ -170,7 +170,8 @@ def helpMessage():
     print (" -s  or  --source=cxx        - Search in cxx files only")
     print (" -s  or  --source=hxx        - Search in hxx files only")
     print (" -s  or  --source=java       - Search in java files only")
-    print (" -s  or  --source=any        - Search in any file\n")
+    print (" -s  or  --source=any        - Search in any file")
+    print (" PS: By now, valid extensions can be: any, c, h, cxx, hxx, java, mm\n")
     print ("Types: Can be macro or method by now")
     print (" -t  or  --type=macros       - Search for macros")
     print (" -t  or  --type=classes      - Search for methods\n")
@@ -193,7 +194,7 @@ def removeEmpty(fullList, sourceType):
         index = []
         count = 0
         for line in aFile:
-            if line.startswith( lookFor )
+            if line.startswith( lookFor ):
                 index.append(count)
             count += 1
 
@@ -237,17 +238,20 @@ else:
 
 fullList = createList(searchWhere, searchIn)
 
-print (str(len(fullList)) + " files found!")
+if not len(fullList):
+    print (" No files found!")
+    tStop = False
+else:
+    print (str(len(fullList)) + " files found!")
+    tStop = True
 
-if searchFor == "macros":
+
+if searchFor == "macros" and tStop:
     print ("Now looking for macros.")
     # remove files which don't have #defines
     newList = removeEmpty(fullList, searchFor)
 
-elif searchFor == "classes":
+elif searchFor == "classes" and tStop:
     print ("Now looking for methods.")
     # remove files which don't have classes
     newList = removeEmpty(fullList, searchFor)
-
-for filename in fullList:
-    xmlfiltercommon.hxx
