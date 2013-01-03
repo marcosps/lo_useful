@@ -255,3 +255,5 @@ elif searchFor == "classes" and tStop:
     print ("Now looking for methods.")
     # remove files which don't have classes
     newList = removeEmpty(fullList, searchFor)
+    
+'''  Test line '''
