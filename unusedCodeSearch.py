@@ -183,6 +183,7 @@ def helpMessage():
     sys.exit(0)
     
 
+'''
 def removeEmpty(fullList, sourceType):
     if sourceType == "macros":
         lookFor = "#define"
@@ -216,6 +217,26 @@ def removeEmpty(fullList, sourceType):
                 index2.append("it's on line 3")
 
         # if index2 is empty, there is any #if before #define, and if not, ... miss code here :P
+'''
+
+
+def countLinesOf(tFile):
+    f = open(tFile, "r")
+    count = 0
+    while not not f.readline():
+        count += 1
+    f.close()
+    return count
+
+
+def getIndexOf(tTerm, tFile):
+    nLines = countLinesOf(tFile)
+    f = open(tFile, "r")
+    indexOfTerms = []
+    for count in range(0,nLines):
+        if str(tTerm) in f.readline():
+	    indexOfTerms.append(count+1)
+    return indexOfTerms
 
 
 
@@ -242,18 +263,32 @@ if not len(fullList):
     print (" No files found!")
     tStop = False
 else:
-    print (str(len(fullList)) + " files found!")
+    print (str(len(fullList)) + " files found!\n")
     tStop = True
 
 
 if searchFor == "macros" and tStop:
     print ("Now looking for macros.")
     # remove files which don't have #defines
-    newList = removeEmpty(fullList, searchFor)
+    #newList = removeEmpty(fullList, searchFor)
+    for eachFile in fullList:
+        print ("Current file: " + str(eachFile))
+	print ("Looking for #define lines..\n")
+	indexList = getIndexOf("#define", eachFile)
+	if not indexList:
+	    print ("No #define lines found!\n")
+	else:
+	    print ("Found " + str(len(indexList)) + " #define(s)")
+	    print ("At line(s): "),
+	    for number in indexList:
+	        print (str(number) + ","),
+	    print ("\n\nPress <enter> to continue..")
+	    stErr = os.system("read a")
+    print ("Done!")	  
 
 elif searchFor == "classes" and tStop:
     print ("Now looking for methods.")
     # remove files which don't have classes
-    newList = removeEmpty(fullList, searchFor)
+    #newList = removeEmpty(fullList, searchFor)
     
 '''  Test line '''
