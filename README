@@ -2,6 +2,7 @@ This repository contains tools for help LibreOffice development.
 
 find_java_templates.sh - Discover in the LO code, if exists parts of the java code
 			with @author and Templates like. This can be removed.
+			This shell script is deprecated. The bug was solved, great! :)
 			Manteiner: Jóse Guilherme Vanz
 
 get_develpers_score.sh - Show how many line of code a developer, inserted 
