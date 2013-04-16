@@ -13,7 +13,7 @@
 # Author: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
 # This script will help to remove all chained appends in LibreOffice fdo#57950
 
-for i in `find . -name *.cxx -print`
+for i in `find . -type f \( -name "*.cxx" -o -name "*.h" \) -print`
 do
 	if cat $i | grep -E 'append\(.*append\(' 2>/dev/null 1>/dev/null
 	then
