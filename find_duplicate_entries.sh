@@ -26,7 +26,7 @@ do
 
 	for use in `egrep "using namespace" $i | uniq | awk '{ print $3 }' `
 	do
-		num=$(grep $use $i | wc -l)
+		num=$(grep "using namespace $use" $i | wc -l)
 		if [ "$num" -gt "1" ]
 		then
 			echo "$i: Namespace $use is duplicated"
