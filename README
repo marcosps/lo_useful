@@ -1,5 +1,17 @@
 This repository contains tools for help LibreOffice development.
 
+find_duplicate_entries.sh - Show all includes and "using namespaces" entries that are
+			duplicated in a cxx or a h file.
+
+find_old_string_classes.sh - Show to us where are used the old strings classes, and these classes
+			need to be replaced.
+
+find_chained_appends.sh - shows where are used chained appends. This appends needs to be replaced
+			by string concatenation, to be more fast in C++.
+
+find_string_comparison.sh - Shows where are used some methods for string comparison. These can be
+			replaced by == operator. Much more simpler.
+
 find_java_templates.sh - Discover in the LO code, if exists parts of the java code
 			with @author and Templates like. This can be removed.
 			This shell script is deprecated. The bug was solved, great! :)
