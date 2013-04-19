@@ -15,7 +15,7 @@
 
 for i in `find . -type f \( -name "*.cxx" -o -name "*.h" \) -print` 
 do
-	for inc in `egrep "#include.*" $i | uniq | awk '{ print $2 }' `
+	for inc in `egrep "#include.*" $i | awk '{ print $2 }' | sort | uniq `
 	do
 		num=$(grep $inc $i | wc -l)
 		if [ "$num" -gt "1" ]
@@ -24,7 +24,7 @@ do
 		fi
 	done
 
-	for use in `egrep "using namespace" $i | uniq | awk '{ print $3 }' `
+	for use in `egrep "using namespace" $i | awk '{ print $3 }' | sort | uniq `
 	do
 		num=$(grep "using namespace $use" $i | wc -l)
 		if [ "$num" -gt "1" ]
