@@ -183,7 +183,7 @@ def helpMessage():
     sys.exit( 0 )
     
 
-
+# remove files which does not have any #define also ignore lines which starts with //
 def removeEmpty( tList, tTerm ):
     newList = []
     for files in tList:
@@ -192,10 +192,11 @@ def removeEmpty( tList, tTerm ):
 
         for i in range( nLines ):
             lineBuffer = f.readline()
-            if str(tTerm) in lineBuffer:
-                newList.append( files )
-                f.close()
-                break
+            if not lineBuffer.startswith("//") and not lineBuffer.startswith(" *"):
+                if str(tTerm) in lineBuffer:
+                    newList.append( files )
+                    f.close()
+                    break
 
         f.close()
     return newList
@@ -216,8 +217,8 @@ def getIndexOf( tTerm, tFile ):
     indexOfTerms = []
     for count in range( nLines ):
         result = f.readline()
-        if str( tTerm ) in result:
-            print( "Found: " + result ),
+        if str( tTerm ) in result and not result.startswith("//"):
+            print( "Found: " + result[len( tTerm ):].rstrip('\n') )
             indexOfTerms.append( count + 1 )
     return indexOfTerms
 
@@ -231,9 +232,7 @@ paramReceived = validParameters()
 searchIn      = paramReceived[0]
 searchFor     = paramReceived[1]
 searchWhere   = paramReceived[2]
-print( "Search in "  + str( searchIn )    + " files." )
-print( "Search for " + str( searchFor ) )
-print( "Search in "  + str( searchWhere ) + " folder.\n" )
+print( "Search in " + str( searchIn ) + " files, for " + str( searchFor ) + ", in "  + str( searchWhere ) + " folder.\n" )
 
 print( "Press <enter> to start ... " )
 os.system( "read b" )
@@ -260,13 +259,15 @@ if searchFor == "macros" and not toStop:
     newList = removeEmpty( fullList, "#define" )
 
     # print the file and the respective #define
+    nFiles = 1
     for eachFile in newList:
         os.system( "clear" )
-        print( "File: " + str( eachFile ) )
+        print( "File " + str( nFiles ) + " of " + str( len( newList ) ) +  ": " + str( eachFile ) )
         indexList = getIndexOf( "#define", eachFile )
 
         print( "\n\nPress <enter> to continue.." )
-        stErr = os.system( "read b" )
+        os.system( "read b" )
+        nFiles += 1
 
     print( "Done!" )
 
