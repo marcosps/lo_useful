@@ -19,9 +19,9 @@ for i in `find . -type f \( -name "*.cxx" -o -name "*.h" \) -print`
 do
 	if cat $i | grep -w "equalsAscii" 2>/dev/null 1>/dev/null
 	then
-		echo $i
+		echo "$i: equalsAscii"
 	elif cat $i | grep -w "compareTo" 2>/dev/null 1>/dev/null
 	then
-		echo $i
+		echo "$i: compareTo"
 	fi
 done

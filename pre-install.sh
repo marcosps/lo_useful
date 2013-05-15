@@ -56,7 +56,7 @@ gitClone()
         exit
     fi
 	
-    if [ $clonedir == "" ]; then
+    if [ "$clonedir" == "" ]; then
         cd $HOME
         git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
         exit

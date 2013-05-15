@@ -18,10 +18,14 @@ for i in `find . -type f \( -name "*.cxx" -o -name "*.h" \) -print`
 do
 	if cat $i | grep -w "String" 2>/dev/null 1>/dev/null
 	then
-		echo $i
+		echo "$i: String"
 
 	elif cat $i | grep -w "XubString" 2>/dev/null 1>/dev/null
 	then
-		echo $i
+		echo "$i: XubString"
+
+	elif cat $i | grep -w "UniString" 2>/dev/null 1>/dev/null
+	then
+		echo "$i: UniString"
 	fi
 done
