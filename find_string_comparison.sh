@@ -23,5 +23,8 @@ do
 	elif cat $i | grep -w "compareTo" 2>/dev/null 1>/dev/null
 	then
 		echo "$i: compareTo"
+	elif cat $i | grep -w "EqualsAscii" 2>/dev/null 1>/dev/null
+	then
+		echo "$i: EqualsAscii: Please move String to O[U]String too :) "
 	fi
 done
