@@ -58,21 +58,21 @@ gitClone()
 	
     if [ "$clonedir" == "" ]; then
         cd $HOME
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
         exit
     fi
 
     # Uses the directory informed.
     if [ -d "$clonedir" ]; then
         cd "$clonedir"
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
+        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
         exit
     else
         # If not exists, try create.
         mkdir -p $clonedir
         if [ -d "$clonedir" ]; then
             cd "$clonedir"
-            git clone git://anongit.freedesktop.org/libreoffice/core libo && echo " " && "Success!"
+            git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
             exit
         else
             echo "Unable to create '$clonedir' folder"
@@ -93,6 +93,7 @@ debianInstall()
 
     sudo apt-get build-dep libreoffice -y
     sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen -y
+    sudo apt-get install libarchive-zip-perl libcupsys2-dev gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
 }
 
 fedoraInstall()
