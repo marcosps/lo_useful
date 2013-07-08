@@ -92,7 +92,7 @@ debianInstall()
     fi
 
     sudo apt-get build-dep libreoffice -y
-    sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen -y
+    sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
 }
 
 fedoraInstall()
@@ -106,7 +106,7 @@ fedoraInstall()
     fi
 
     sudo yum-builddep libreoffice -y
-    sudo yum install git libgnomeui-devel gawk junit doxygen -y
+    sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y
 }
 
 suseInstall()
