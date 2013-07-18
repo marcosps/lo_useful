@@ -83,7 +83,7 @@ gitClone()
 
 debianInstall()
 {
-    echo "Dep install for Debian/Ubuntu"
+    echo "Dep install for Debian/Ubuntu/Mint"
     echo " "
     sudo apt-get update
 
