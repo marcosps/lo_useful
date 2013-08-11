@@ -88,18 +88,22 @@ debianInstall()
     echo "Dep install for Debian/Ubuntu/Mint"
     echo " "
 
+    # installing aptitude for a lot of reasons :)
+    sudo apt-get install aptitude
+
+
     if $update; then
-        sudo apt-get update
+        sudo aptitude update
     fi
 
     if $inccache; then
-        $option ccache
+        sudo aptitude install ccache
     fi
 
-    option="sudo apt-get install"
+    option="sudo aptitude install"
 
     if $download; then
-        option="apt-get download"
+        option="aptitude download"
     fi
 
     if $download; then
@@ -130,17 +134,17 @@ debianInstall()
 
                 file_entry=`ls | grep "$i" | wc -l`
                 if [ $file_entry -eq 0 ]; then
-                    apt-get download $i
+                    aptitude download $i
                 fi
             fi
         done
     else
-        sudo apt-get build-dep libreoffice -y
+        sudo aptitude build-dep libreoffice -y
     fi
 
     $option git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
     $option libarchive-zip-perl 
-    #$option libcupsys2-dev 
+    $option libcupsys2-dev 
     $option gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
 }
 
@@ -268,7 +272,7 @@ cloneSyntaxError()
 inccache=false
 noclone=false
 clonedir=""
-download=true
+download=false
 update=true
 
 ###
