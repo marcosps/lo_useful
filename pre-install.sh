@@ -42,6 +42,8 @@ usageSyntax()
     echo " --dir [/some/folder/]    - Dep install and clone in /some/folder/"
     echo "                          - If no dir was informed, whill be installed" 
     echo "                            the deps and git clone in $HOME/libo/ folder"
+    echo " --download               - Download packeages instead of install them"
+    echo " --no-update              - Don't update the repository"
     echo " --no-clone               - Only dep install, don't clone"
     echo " --ccache                 - Install ccache. It speeds up recompilation by"
     echo "                            caching previous compilations and detecting when"
@@ -85,29 +87,90 @@ debianInstall()
 {
     echo "Dep install for Debian/Ubuntu/Mint"
     echo " "
-    sudo apt-get update
 
-    if $inccache; then
-        sudo apt-get install ccache
+    if $update; then
+        sudo apt-get update
     fi
 
-    sudo apt-get build-dep libreoffice -y
-    sudo apt-get install git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
-    sudo apt-get install libarchive-zip-perl libcupsys2-dev gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
+    if $inccache; then
+        $option ccache
+    fi
+
+    option="sudo apt-get install"
+
+    if $download; then
+        option="apt-get download"
+    fi
+
+    if $download; then
+        double_jump=false
+
+        # this format usually is: Build-Depends: zlib1g-dev
+        for i in `apt-rdepends --build-depends --follow=DEPENDS libreoffice`
+        do
+            if $double_jump; then
+                double_jump=false
+                continue
+            fi
+
+            # after this part of build-dep, we have a number, so skip too
+            if [[ "$i" == "(>=" || "$i" == "(>>" ]]; then
+                double_jump=true
+                continue
+            fi
+
+            # skip deps by LibreOffice itself
+            case $i in
+                "libcmis-dev" | "libicu-dev" | "liblcms2-dev" | "libmdds-dev" | "libwpd-dev")
+                continue
+            esac
+
+            # first line of command
+            if [[ "$i" != "libreoffice" && "$i" != "Build-Depends:" && "$i" != "Build-Depends-Indep:" ]]; then
+
+                file_entry=`ls | grep "$i" | wc -l`
+                if [ $file_entry -eq 0 ]; then
+                    apt-get download $i
+                fi
+            fi
+        done
+    else
+        sudo apt-get build-dep libreoffice -y
+    fi
+
+    $option git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
+    $option libarchive-zip-perl 
+    #$option libcupsys2-dev 
+    $option gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
 }
 
 fedoraInstall()
 {
     echo "Dep install for Fedora"
     echo " "
-    sudo yum update
+
+    if $update; then
+        sudo yum update
+    fi
 	
     if $inccache; then
         sudo yum install ccache
     fi
 
+    option="sudo yum install"
+
+    if $download; then
+        option="yum install"
+    fi
+
+    sudo yum install yum-downloadonly
     sudo yum-builddep libreoffice -y
-    sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y
+
+    if $download; then
+        $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y --download-only
+    else
+        $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y
+    fi
 }
 
 suseInstall()
@@ -205,6 +268,8 @@ cloneSyntaxError()
 inccache=false
 noclone=false
 clonedir=""
+download=true
+update=true
 
 ###
 ### Check input parameters.
@@ -219,7 +284,26 @@ do
                 cloneSyntaxError
             fi 
             noclone=true;;
-        "--dir")		
+        # if we want just ot download the deps, create a dir called
+        # deps and enter in the new dir, and call this shell again with the parameter
+        "--download")
+            mkdir deps 2> /dev/null
+
+            if [ ! -d "deps" ]; then
+                echo "Failed to create deps dir. ABORTING."
+                exit
+            fi
+
+            cd deps
+            bash ../$0 --downloadnow --no-update --no-clone
+            exit;;
+        # just for intern use, download the packets inside the deps dir
+        "--downloadnow")
+            # don't use sude just for download
+            download=true;;
+        "--no-update")
+            update=false;;
+        "--dir")
             if $noclone; then
                 cloneSyntaxError
             fi
