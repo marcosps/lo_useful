@@ -104,6 +104,8 @@ debianInstall()
 
     if $download; then
         option="aptitude download"
+        # installing the tools to verify the dependencies of a package
+        sudo aptitude install apt-rdepends
     fi
 
     if $download; then
