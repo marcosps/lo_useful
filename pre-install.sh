@@ -26,8 +26,50 @@
 ### - Ricardo Montania .......(ricardo.montania [at] gmail.com)
 ### Testers
 ### - Marcos Paulo de Souza ..(marcos.souza.org [at] gmail.com)
-### - Jose Guilherme Vanz ....(guilherme.sft [at] gmail.com)
+### - Jose Guilherme Vanz ....(guilherme.sft    [at] gmail.com)
 ###
+
+
+### 
+### Changelog
+###
+# 1.0 (Oct 31, 2012)
+# - Start version
+# - Build dependencies and install for supported distros
+# - Fedora Support
+# - Debian/Ubuntu Support
+#
+# 1.1 (Nov 02, 2012)
+# - Option to clone core repository added
+# - Bug fixes
+#
+# 1.2 (Nov 05, 2012)
+# - Inform the location where to clone added
+# - --no-clone option added
+# - --help option added
+#
+# 1.3 (Dec 04, 2012)
+# - OpenSUSE Support added (Thanks to Alexandre Vicenzi)
+#
+# 1.4 (May 15, 2013)
+# - Bug fixes
+# - Ubuntu 12.x bug fixes (Thanks to Carlos Alexandro Becker)
+#
+# 1.5 (Jul 18, 2013)
+# - Mint Support added
+#
+# 1.6 (Ago 12, 2013)
+# - Packages download option added
+# - Bug fixes for installing tools
+#
+# 1.7 (Ago 22, 2013)
+# - --just-clone option added
+
+###
+### Version
+###
+VERSION="1.7"
+VERSION_DATE="Ago 12, 2013"
 
 usageSyntax()
 {
@@ -40,47 +82,33 @@ usageSyntax()
     echo "Options:"
     echo " "
     echo " --dir [/some/folder/]    - Dep install and clone in /some/folder/"
-    echo "                          - If no dir was informed, whill be installed" 
-    echo "                            the deps and git clone in $HOME/libo/ folder"
-    echo " --download               - Download packeages instead of install them"
-    echo " --no-update              - Don't update the repository"
-    echo " --no-clone               - Only dep install, don't clone"
+    echo "                            PS: If no dir was informed, whill be installed"
+    echo "                            the deps and git clone will use the $HOME/libo/ folder"
+    echo " --just-clone             - Only clone the core repository"
+    echo " --just-download          - Just download the needed packages instead of install them"
+    echo " --no-update              - Disable aptitide update before the aptitura install"
+    echo " --no-clone               - Disable clone option (only dep install)"
     echo " --ccache                 - Install ccache. It speeds up recompilation by"
     echo "                            caching previous compilations and detecting when"
     echo "                            the same compilation is being done again"
     echo " --help                   - Show this help message"
+    echo " --version                - Show current version"
     echo " "
 }
 
 gitClone()
 {
-    if $noclone; then
+    if [ $noclone == "true" ]; then
         exit
     fi
 	
     if [ "$clonedir" == "" ]; then
-        cd $HOME
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
-        exit
+        clonedir=$HOME/libo
     fi
-
-    # Uses the directory informed.
-    if [ -d "$clonedir" ]; then
-        cd "$clonedir"
-        git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
-        exit
-    else
-        # If not exists, try create.
-        mkdir -p $clonedir
-        if [ -d "$clonedir" ]; then
-            cd "$clonedir"
-            git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
-            exit
-        else
-            echo "Unable to create '$clonedir' folder"
-            exit
-        fi
-    fi
+    
+    git clone git://anongit.freedesktop.org/libreoffice/core $clonedir &&
+        echo "Success! Enjoy your LibreOffice source code at $clonedir :-)"
+    exit
 }
 
 debianInstall()
@@ -92,29 +120,29 @@ debianInstall()
     sudo apt-get install aptitude
 
 
-    if $update; then
+    if [ $update == "true" ]; then
         sudo aptitude update
     fi
 
-    if $inccache; then
-        sudo aptitude install ccache
+    if [ $inccache == "true" ]; then
+        sudo aptitude install ccache -y
     fi
 
     option="sudo aptitude install"
 
-    if $download; then
+    if [ $download == "true" ]; then
         option="aptitude download"
         # installing the tools to verify the dependencies of a package
         sudo aptitude install apt-rdepends
     fi
 
-    if $download; then
-        double_jump=false
+    if [ $download == "true" ]; then
+        double_jump="false"
 
         # this format usually is: Build-Depends: zlib1g-dev
         for i in `apt-rdepends --build-depends --follow=DEPENDS libreoffice`
         do
-            if $double_jump; then
+            if [ $double_jump == "true" ]; then
                 double_jump=false
                 continue
             fi
@@ -134,7 +162,7 @@ debianInstall()
             # first line of command
             if [[ "$i" != "libreoffice" && "$i" != "Build-Depends:" && "$i" != "Build-Depends-Indep:" ]]; then
 
-                file_entry=`ls | grep "$i" | wc -l`
+                file_entry=$(ls | grep "$i" | wc -l)
                 if [ $file_entry -eq 0 ]; then
                     aptitude download $i
                 fi
@@ -155,24 +183,24 @@ fedoraInstall()
     echo "Dep install for Fedora"
     echo " "
 
-    if $update; then
+    if [ $update == "true" ]; then
         sudo yum update
     fi
 	
-    if $inccache; then
+    if [ $inccache == "true" ]; then
         sudo yum install ccache
     fi
 
     option="sudo yum install"
 
-    if $download; then
+    if [ $download == "true" ]; then
         option="yum install"
     fi
 
     sudo yum install yum-downloadonly
     sudo yum-builddep libreoffice -y
 
-    if $download; then
+    if [ $download == "true" ]; then
         $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y --download-only
     else
         $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y
@@ -204,8 +232,8 @@ suseInstall()
     read -p "Select your system type: " systype
 
     case $systype in
-        1) sysname="32 bits";;
-        2) sysname="64 bits";;
+        "1") sysname="32 bits";;
+        "2") sysname="64 bits";;
         *) echo "Sorry, invalid option!"; exit;;
     esac
     
@@ -219,11 +247,11 @@ suseInstall()
     sudo zypper update
     sudo zypper in java-1_7_0-openjdk-devel # gcj is installed by default but it does not work reasonably.
     
-    if $inccache; then
+    if [ $inccache == "true" ]; then
         sudo zypper in ccache
     fi
 
-    if [$systype == 1]; then
+    if [ $systype == "1" ]; then
         sudo zypper in krb5-devel-32bits
     else
         sudo zypper in krb5-devel
@@ -256,11 +284,23 @@ distroChoice()
     read -p "Choice your distro: " distro
 
     case $distro in
-        1) debianInstall;;
-        2) fedoraInstall;;
-        3) suseInstall;;
-        4) echo "Please, follow the instructions in \"http://www.libreoffice.org/developers-2\" to configure you system or contact us."; exit;;
-        *) echo "Sorry, invalid option!"; exit;;
+        "1")
+            debianInstall
+            ;;
+        "2")
+            fedoraInstall
+            ;;
+        "3")
+            suseInstall
+            ;;
+        "4")
+            echo "Please, follow the instructions in \"http://www.libreoffice.org/developers-2\" to configure you system or contact us."
+            exit
+            ;;
+        *)
+            echo "Sorry, invalid option!"
+            exit
+            ;;
     esac
 }
 
@@ -271,11 +311,19 @@ cloneSyntaxError()
     exit
 }
 
-inccache=false
-noclone=false
+showVersion()
+{
+    echo "Current version: $VERSION from $VERSION_DATE"
+    echo ""
+    echo "See the changelog section for more information"
+}
+
+inccache="false"
+noclone="false"
 clonedir=""
-download=false
-update=true
+download="false"
+update="true"
+only_clone="false"
 
 ###
 ### Check input parameters.
@@ -283,16 +331,32 @@ update=true
 while [ $# -ne 0 ]
 do
     case $1 in
-        "--help") usageSyntax; exit;;
-        "--ccache") inccache=true;;
+
+        "--help")
+            usageSyntax
+            exit
+            ;;
+
+        "--version")
+            showVersion
+            exit
+            ;;
+
+        "--ccache")
+            inccache="true"
+            ;;
+
         "--no-clone")
+            echo "opcao para nao clonar."
             if [ "$clonedir" != "" ]; then
                 cloneSyntaxError
-            fi 
-            noclone=true;;
+            fi
+            noclone="true"
+            ;;
+
         # if we want just ot download the deps, create a dir called
         # deps and enter in the new dir, and call this shell again with the parameter
-        "--download")
+        "--just-download")
             mkdir deps 2> /dev/null
 
             if [ ! -d "deps" ]; then
@@ -302,15 +366,25 @@ do
 
             cd deps
             bash ../$0 --downloadnow --no-update --no-clone
-            exit;;
+            exit
+            ;;
+
         # just for intern use, download the packets inside the deps dir
         "--downloadnow")
-            # don't use sude just for download
-            download=true;;
-        "--no-update")
-            update=false;;
+            # don't use sudo just for download
+            download="true"
+            ;;
+
+        "--just-clone")
+            only_clone="true"
+            ;;
+
+        "--no-updae")
+            update="false"
+            ;;
+
         "--dir")
-            if $noclone; then
+            if [ $noclone == "true" ]; then
                 cloneSyntaxError
             fi
 
@@ -321,17 +395,25 @@ do
             dr=${clonedir:0:1}
             # Need a name before the next parameter.
             if [ "$dr" == "-" ]; then
-                echo "Syntax error. Invalid directory \"$clonedir\"."; exit
+                echo "Syntax error. Invalid directory \"$clonedir\"."
+                exit
             fi
             ;;
-        *) echo "Syntax error. Invalid parameter \"$1\"."; usageSyntax; exit;;
+        *)
+            echo "Syntax error. Invalid parameter \"$1\"."
+            usageSyntax;
+            exit
+            ;;
     esac
     # Next parameter.
     shift
 done
 
 clear
-echo "Script for dependencies installation to compile LibreOffice."
-showDestination;
-distroChoice;
-gitClone;
+echo "Script for dependencies installation and/or LibreOffice source code."
+showDestination
+
+if [ ! $only_clone ]; then
+    distroChoice
+fi
+gitClone
