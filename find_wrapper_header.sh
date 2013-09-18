@@ -17,6 +17,11 @@ for file in `find . -type f \( -name "*.h" -o -name "*.hxx" \) -print`
 do
 	if [ $(cat $file | grep '#include' | wc -l) -gt 0 ]
 	then
+                if [[ "$file" == *precompile* ]]
+		then
+			continue;
+		fi
+
 		if [ $(cat $file | grep -w "class" | wc -l) -gt 0 ]
 		then
 			continue;
