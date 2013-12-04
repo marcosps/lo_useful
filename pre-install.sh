@@ -174,7 +174,7 @@ debianInstall()
 
     $option git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
     $option libarchive-zip-perl 
-    $option libcupsys2-dev 
+    $option libcupsys2-dev libcups2-dev
     $option gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
 }
 
