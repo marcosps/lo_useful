@@ -176,6 +176,14 @@ debianInstall()
     $option libarchive-zip-perl 
     $option libcupsys2-dev libcups2-dev
     $option gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
+    # Ubuntu 13.04 - Missing
+    $option autoconf libcups2-dev libfontconfig1-dev g++ gcj-4.7-jdk gperf 
+    $option libjpeg-dev libxslt1-dev xsltproc libxml2-utils python3.3-dev 
+    $option libx11-dev libxt-dev libxext-dev libxrender-dev libx11-dev libxrandr-dev 
+    $option bison flex libgconf2-dev libdbus-glib-1-dev libgtk2.0-dev libgtk-3-dev
+    $option libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+    $option libgl-dev libglu-dev ant junit4
+    # Ubuntu 13.04
 }
 
 fedoraInstall()
