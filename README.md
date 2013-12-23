@@ -4,7 +4,6 @@ This repository contains tools for help LibreOffice development.
 
 ----
 
-
 ### find\_duplicate\_entries.sh
 
 Show all includes and _"using namespaces"_ entries that are duplicated in a _cxx_ or a h file.
@@ -48,5 +47,3 @@ A script who actually find these types of unused codes: unused macros dead ifdef
 ### todo_unusedCode.txt
 
 Things that need to be done in the _unusedCodeSearch.sh_
-
--------------------------------------
