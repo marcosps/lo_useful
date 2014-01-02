@@ -20,12 +20,6 @@ Shows where are used chained appends. This appends needs to be replaced by strin
 
 Shows where are used some methods for string comparison. These can be replaced by `==` operator. Much more simpler.
 
-### find\_java\_templates.sh
-
-Discover in the LO code, if exists, parts of the **Java** code with `@author` and _Templates like_. This can be removed. This shell script is deprecated. The bug was solved, great! :) 
-
-##### Manteiner: Jóse Guilherme Vanz
-
 ### get\_developers\_score.sh
 
 Show how many lines of code a developer has inserted, has changed, and how much commit he did. 
