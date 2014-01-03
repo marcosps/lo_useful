@@ -4,9 +4,9 @@ This repository contains tools for help LibreOffice development.
 
 ----
 
-### find\_duplicate\_entries.sh
+### find\_duplicate\_entries.py
 
-Show all includes and _"using namespaces"_ entries that are duplicated in a _cxx_ or a h file.
+Show all includes and _"using namespaces"_ entries that are duplicated in a _cxx_, hxx, c and in h file.
 
 ### find\_old\_string\_classes.sh
 
