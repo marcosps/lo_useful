@@ -17,46 +17,53 @@ import os
 import sys
 
 def verifyIncludes(filename):
-	f = open(filename, 'r')
+	
+	f = open( filename, 'r' )
 
-	list_includes = []
-	linen = 0
+	list_includes = {}
+	line_number = 0
 	in_comment = False
 
 	for line in f:
-		linen = linen + 1
+		line_number = line_number + 1
+
 		if '/*' in line:
 			in_comment = True
 		if '*/' in line:
 			in_comment = False
 
 		if not in_comment:
-			if line.startswith('#include'):
-				includeName = line.split(' ')
+			if line.startswith( '#include' ):
+				include_name = line.split(' ')
 
 				# remove multiple spaces between #include and <something.h>
-				if len(includeName) > 2:
-					includeName = ' '.join(includeName)
-					includeName = includeName.split('#include')
+				if len(include_name) > 2:
+					include_name = ' '.join( include_name )
+					include_name = include_name.split( '#include' )
 
-				if len(includeName) == 1:
+				if len( include_name ) == 1:
 					# we don't have a space after the #include clause
-					includeName = line.split('#include')
+					include_name = line.split( '#include' )
 
-					if len(includeName) == 2:
-						includeName = includeName[1]
+					if len( include_name ) == 2:
+						include_name = include_name[1]
 					else:
-						print 'Error while trying to get the include name in file/line: ' + filename + '/' + str(linen)
+						print ( 'Error while trying to get the include name in file/line: %s/%d' % ( filename, line_number ) )
 				else:
-					includeName = includeName[1]
+					include_name = include_name[1]
 
-				includeName = includeName.replace('\n', '')
+				include_name = include_name.replace( '\n', '' )
 
-				if includeName in list_includes:
-					print filename + ': Include ' + includeName + ' appears twice on line ' + str(linen)
+				if list_includes.has_key( include_name ):
+					list_includes[include_name].append( line_number )
 				else:
-					list_includes.append(includeName)
+					list_includes[include_name] = [line_number]
 	f.close()
+
+	for k, v in list_includes.items():
+		if len(v) > 1:
+			print ( '%s: Include %s appears on lines %s.'\
+				% ( filename, k, ', '.join( [ str(x) for x in list_includes.get( k ) ] ) ) )
 			
 
 def verifyUsing(filename):
