@@ -62,8 +62,8 @@ def verifyIncludes(filename):
 
 	for k, v in list_includes.items():
 		if len(v) > 1:
-			print ( '%s: Include %s appears on lines %s.'\
-				% ( filename, k, ', '.join( [ str(x) for x in list_includes.get( k ) ] ) ) )
+			print ( '%s: Include %s appears on lines %s and %d.'\
+				% ( filename, k, ', '.join( [ str(x) for x in list_includes.get( k )[:-1] ] ), list_includes.get( k )[-1:][0] ) )
 			
 
 def verifyUsing(filename):
