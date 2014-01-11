@@ -68,7 +68,40 @@ def verifyIncludes(filename):
 
 def verifyUsing(filename):
 	f = open(filename, 'r')
+
+	list_using = {}
+	line_number = 0
+	in_comment = False
+
+	for line in f:
+		line_number = line_number + 1
+
+		if '/*' in line:
+			in_comment = True
+		if '*/' in line:
+			in_comment = False
+
+		if not in_comment:
+			if line.startswith( 'using' ) and 'namespace' in line:
+				namespace = line.split('namespace')
+
+				# here we need two elements in the namespace list
+				if len(namespace) != 2:
+					print ( '%s: Could not detect the namespace in line %d' ) % (filename, line_number)
+				else:
+					# remove spaces of namespace name
+					namespace_name = namespace[1].strip()
+
+					if list_using.has_key(namespace_name):
+						list_using[namespace_name].append(line_number)
+					else:
+						list_using[namespace_name] = [line_number]
 	f.close()
+
+	for k, v in list_using.items():
+		if len(v) > 1:
+			print ( '%s: Using statement %s appears on lines %s and %d.'\
+				% ( filename, k, ', '.join( [ str(x) for x in list_using.get( k )[:-1] ] ), list_using.get( k )[-1:][0] ) )
 
 def helpMessage():
 	print '		[--]include	- Shows the duplicated includes in files'
