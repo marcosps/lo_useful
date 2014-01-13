@@ -194,6 +194,7 @@ suseInstall()
     echo "2. 12.1"
     echo "3. 12.2"
     echo "4. 12.3"
+    echo "5. 13.1"
     echo " "
     read -p "Select your SUSE version: " version
 
@@ -202,6 +203,7 @@ suseInstall()
         2) vername="12.1";;
         3) vername="12.2";;
         4) vername="12.3";;
+        5) vername="13.1";;
         *) echo "Sorry, invalid option!"; exit;;
     esac
 
@@ -239,7 +241,7 @@ suseInstall()
 	
     sudo zypper mr --enable "openSUSE-$vername-Source" # Enable te repo to download the source.
     sudo zypper si -d libreoffice # For OpenSUSE 11.4+ (was OpenOffice_org-bootstrap)
-    sudo zypper in git libgnomeui-devel gawk junit doxygen
+    sudo zypper in git libgnomeui-devel gawk junit doxygen python3-devel
 }
 
 showDestination()

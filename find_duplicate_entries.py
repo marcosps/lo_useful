@@ -17,51 +17,91 @@ import os
 import sys
 
 def verifyIncludes(filename):
-	f = open(filename, 'r')
+	
+	f = open( filename, 'r' )
 
-	list_includes = []
-	linen = 0
+	list_includes = {}
+	line_number = 0
 	in_comment = False
 
 	for line in f:
-		linen = linen + 1
+		line_number = line_number + 1
+
 		if '/*' in line:
 			in_comment = True
 		if '*/' in line:
 			in_comment = False
 
 		if not in_comment:
-			if line.startswith('#include'):
-				includeName = line.split(' ')
+			if line.startswith( '#include' ):
+				include_name = line.split(' ')
 
 				# remove multiple spaces between #include and <something.h>
-				if len(includeName) > 2:
-					includeName = ' '.join(includeName)
-					includeName = includeName.split('#include')
+				if len(include_name) > 2:
+					include_name = ' '.join( include_name )
+					include_name = include_name.split( '#include' )
 
-				if len(includeName) == 1:
+				if len( include_name ) == 1:
 					# we don't have a space after the #include clause
-					includeName = line.split('#include')
+					include_name = line.split( '#include' )
 
-					if len(includeName) == 2:
-						includeName = includeName[1]
+					if len( include_name ) == 2:
+						include_name = include_name[1]
 					else:
-						print 'Error while trying to get the include name in file/line: ' + filename + '/' + str(linen)
+						print ( 'Error while trying to get the include name in file/line: %s/%d' % ( filename, line_number ) )
 				else:
-					includeName = includeName[1]
+					include_name = include_name[1]
 
-				includeName = includeName.replace('\n', '')
+				include_name = include_name.replace( '\n', '' )
 
-				if includeName in list_includes:
-					print filename + ': Include ' + includeName + ' appears twice on line ' + str(linen)
+				if list_includes.has_key( include_name ):
+					list_includes[include_name].append( line_number )
 				else:
-					list_includes.append(includeName)
+					list_includes[include_name] = [line_number]
 	f.close()
+
+	for k, v in list_includes.items():
+		if len(v) > 1:
+			print ( '%s: Include %s appears on lines %s and %d.'\
+				% ( filename, k, ', '.join( [ str(x) for x in list_includes.get( k )[:-1] ] ), list_includes.get( k )[-1:][0] ) )
 			
 
 def verifyUsing(filename):
 	f = open(filename, 'r')
+
+	list_using = {}
+	line_number = 0
+	in_comment = False
+
+	for line in f:
+		line_number = line_number + 1
+
+		if '/*' in line:
+			in_comment = True
+		if '*/' in line:
+			in_comment = False
+
+		if not in_comment:
+			if line.startswith( 'using' ) and 'namespace' in line:
+				namespace = line.split('namespace')
+
+				# here we need two elements in the namespace list
+				if len(namespace) != 2:
+					print ( '%s: Could not detect the namespace in line %d' ) % (filename, line_number)
+				else:
+					# remove spaces of namespace name
+					namespace_name = namespace[1].strip()
+
+					if list_using.has_key(namespace_name):
+						list_using[namespace_name].append(line_number)
+					else:
+						list_using[namespace_name] = [line_number]
 	f.close()
+
+	for k, v in list_using.items():
+		if len(v) > 1:
+			print ( '%s: Using statement %s appears on lines %s and %d.'\
+				% ( filename, k, ', '.join( [ str(x) for x in list_using.get( k )[:-1] ] ), list_using.get( k )[-1:][0] ) )
 
 def helpMessage():
 	print '		[--]include	- Shows the duplicated includes in files'
