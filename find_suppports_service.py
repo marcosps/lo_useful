@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 
 if len(sys.argv) > 1:
@@ -10,11 +11,16 @@ else:
 
 print('Current path: ' + path)
 
+regex = re.compile('sal_Bool ([a-zA-Z_0-9]*)::supportsService')
+
 for root, dirs, files in os.walk(path):
+
 	if 'external' in dirs:
 		dirs.remove('external')
+
 	if 'workdir' in dirs:
 		dirs.remove('workdir')
+
 	if 'instdir' in dirs:
 		dirs.remove('instdir')
 
@@ -24,23 +30,13 @@ for root, dirs, files in os.walk(path):
 
 			filename = os.path.join(root, f)
 
-			#print('Scanning file: ' + filename)
-
 			with open(filename, 'r') as local_file:
 				line_number = 0
-				in_supports_service = False
-
-				lines = []
 
 				for line in local_file:
 
-					line_number = line_number + 1
+					line_number += 1
 
-					if 'cppu::supportsService' in line:
-						continue
-					elif '::supportsService' in line:
-						lines.append(line_number)
-						continue
-
-				if len(lines) > 0:
-					print ('%s: Needs to convert supportsService in lines %s.') % (filename, ', '.join([str(x) for x in lines]))
+					if regex.match(line):
+						print ('%s: Needs to convert supportsService at line %s.' % (filename, line_number))
+						break
