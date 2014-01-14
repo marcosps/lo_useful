@@ -241,7 +241,7 @@ suseInstall()
 	
     sudo zypper mr --enable "openSUSE-$vername-Source" # Enable te repo to download the source.
     sudo zypper si -d libreoffice # For OpenSUSE 11.4+ (was OpenOffice_org-bootstrap)
-    sudo zypper in git libgnomeui-devel gawk junit doxygen python3-devel
+    sudo zypper in git libgnomeui-devel gawk junit doxygen python3-devel libreoffice-pyuno
 }
 
 showDestination()
