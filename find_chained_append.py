@@ -1,7 +1,7 @@
 import os
 import sys
 
-for root, dirs, files in os.walk('.'):
+for root, dirs, files in os.walk('../libo-core'):
 
         if 'external' in dirs:
                 dirs.remove('external')
@@ -10,7 +10,7 @@ for root, dirs, files in os.walk('.'):
         if 'instdir' in dirs:
                 dirs.remove('instdir')
 
-        for file in files:
+	for file in files:
                 if file.startswith('.'):
                         continue
 
@@ -32,6 +32,6 @@ for root, dirs, files in os.walk('.'):
                                 
                                 if not in_comment:
                                         if '.append(' in line:
-                                                print('%s in line: %d') % (filepath, line_number)
+						print('%s in line: %d') % (filepath, line_number)
                         
                         f.close()
