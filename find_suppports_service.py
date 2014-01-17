@@ -47,9 +47,9 @@ def check(file_name):
 			scope = text[first_brace:last_brace]
 
 			if not 'cppu::supportsService' in scope:
-				print('%s: Needs to be converted to cppu::supportsService at line %d.' % (file_name, gel_line(text, start)))
+				print('%s: Needs to be converted to cppu::supportsService at line %d.' % (file_name, get_line(text, start)))
 
-def gel_line(text, position):
+def get_line(text, position):
 
 	lines = text.splitlines()
 	lines_size = [len(x) for x in lines]
