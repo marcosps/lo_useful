@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import re
 import sys
 
 solar_defs = []
@@ -55,7 +56,12 @@ def buildSolarDefs():
 buildSolarDefs()
 print solar_defs
 
-for root, dirs, files in os.walk('.'):
+path = sys.argv[1] if len(sys.argv) > 1 else '.'
+replace = sys.argv(2) == '-r' if len(sys.argv) > 2 else False
+
+print('Replace enabled. Be careful.')
+
+for root, dirs, files in os.walk(path):
 
 	if 'external' in dirs:
 		dirs.remove('external')
@@ -68,17 +74,19 @@ for root, dirs, files in os.walk('.'):
 		if f.endswith(".c") or f.endswith('.cxx') or f.endswith('.h') or f.endswith('.hxx'):
 			filename = os.path.join(root, f)
 			#print 'File ' + filename
+			found = False
+			has_solar = False
+
 			with open(filename, 'r') as local_file:
 
 				# check if we have solar.h included in the file
 				if 'tools/solar.h' in local_file.read():
+					has_solar = True
 					#print ('%s has solar.h') % (filename)
 					line_number = 0
 
 					# return the file cursor
 					local_file.seek(0)
-
-					found = False
 
 					for line in local_file:
 						line_number += 1
@@ -86,8 +94,19 @@ for root, dirs, files in os.walk('.'):
 						for element in solar_defs:
 							if element in line:
 								found = True
-								print ('%s: definition of solar found: %s used in line %d') % \
-										(filename, line, line_number)
+								#print ('%s: definition of solar found: %s used in line %d') % \
+								#		(filename, line, line_number)
 
-					if not found:
-						print ('%s don\'t need to include solar.h') % (filename)
+			if has_solar and not found:
+				print ('%s don\'t need to include solar.h.') % (filename)
+
+				if replace:
+					with open(filename, 'r') as f:
+						lines = f.read()
+
+					lines = re.sub(r'(#include <tools/solar.h>\n)|(#include "tools/solar.h"\n)', '', lines)
+
+					with open(filename, 'w') as f:
+						f.write(lines)
+
+					print('Replaced.')
