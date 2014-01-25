@@ -55,7 +55,8 @@ print solar_defs
 path = sys.argv[1] if len(sys.argv) > 1 else '.'
 replace = sys.argv(2) == '-r' if len(sys.argv) > 2 else False
 
-print('Replace enabled. Be careful.')
+if replace == '-r':
+	print('Replace enabled. Be careful.')
 
 for root, dirs, files in os.walk(path):
 
@@ -88,6 +89,7 @@ for root, dirs, files in os.walk(path):
 						for element in solar_defs:
 							if element in line:
 								found = True
+								print ('%s: Found %s in line %d') % (filename, element, line_number)
 
 			if has_solar and not found:
 				print ('%s don\'t need to include solar.h.') % (filename)
