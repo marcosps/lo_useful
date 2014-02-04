@@ -13,7 +13,14 @@
 
 # This script was made to list how many some people already changed in LO
 
-for name in "Marcos Paulo de Souza" "José Guilherme Vanz" "Olivier Hallot" "Ricardo Montania" "Alexandre Vicenzi" "Anderson Roberto"
+for name in \
+		"Alexandre Vicenzi" \
+		"Anderson Roberto" \
+		"José Guilherme Vanz" \
+		"Marcos Paulo de Souza" \
+		"Olivier Hallot" \
+		"Ricardo Montania" \
+		"Rodolfo Ribeiro Gomes"
 do
 	echo $name": $(git log --oneline --author="$name" | wc -l) commits"
 	git log --numstat --oneline --pretty="%H" --author="$name" | awk 'NF==3 {plus+=$1; minus+=$2}; END \
