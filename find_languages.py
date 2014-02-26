@@ -740,15 +740,19 @@ def walklevel(some_dir, level=1):
 
 def get_files(path):
 
-	exts = []
+	exts = {}
 
 	for root, dirs, files in os.walk(path):
 
 		for f in files:
-			file, ext = os.path.splitext(f)
 
-			if ext and ext.lower() not in exts:
-				exts.append(ext.lower())
+			file, ext = os.path.splitext(f)
+			ext = ext.lower()
+
+			if ext not in exts:
+				exts[ext] = 1
+			else:
+				exts[ext] += 1
 
 	return exts
 
@@ -758,7 +762,7 @@ def write_exts_to_file():
 
 	for root, dirs, files in walklevel('.', 1):
 
-		for ext in get_files(root):
+		for ext, count in get_files(root).items():
 
 			if exts.has_key(ext):
 				exts.get(ext).append(root)
@@ -780,4 +784,18 @@ def write_exts_to_file():
 
 			f.write('\n\n')
 
-write_exts_to_file()
+def write_lng_to_file():
+
+	for root, dirs, files in walklevel('.', 1):
+
+		with open('programming_languages_by_folder.md', 'a') as f:
+
+			f.write('%s\n------\n\n' % root)
+
+			for ext, count in get_files(root).items():
+				if ext_desc.has_key(ext):
+					f.write('%s - %s - %d\n' % (ext, ext_desc.get(ext) , count))
+
+			f.write('\n\n')
+
+write_lng_to_file()
