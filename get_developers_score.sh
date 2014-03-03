@@ -16,6 +16,7 @@
 for name in \
 		"Alexandre Vicenzi" \
 		"Anderson Roberto" \
+		"Donizete Waterkemper" \
 		"José Guilherme Vanz" \
 		"Marcos Paulo de Souza" \
 		"Olivier Hallot" \
