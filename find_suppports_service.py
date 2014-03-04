@@ -8,63 +8,23 @@ def check(file_name):
 
 	with open(file_name, 'r') as f:
 
-		text = f.read()
-		s = 'sal_Bool(.)((SAL_CALL)(.))?([a-zA-Z0-9])+::supportsService'
-		starts = [match.start() for match in re.finditer(s, text)]
+		text = f.read().split('\n')
+		i = 0
+		while i < len(text):
+			if not text[i].startswith('//') and '::supportsService' in text[i] and 'cppu' not in text[i]:
+				while '{' not in text[i]:
+					i = i + 1
 
-		for start in starts:
-			braces = 0
-			first_brace = -1
-			last_brace = -1
-			i = start
+				if  '{' in text[i]:
+					if 'SAL_' in text[i + 1] or 'OSL_' in text[i + 1] or not text[i + 1].strip():
+						i = i +1
 
-			while True:
+					if 'cppu::supportsService' in text[i + 1] and '}' in text[i + 2]:
+						"ok here..."
+					else:
+						print('%s: Needs to be converted to cppu::supportsService at line %d.') % (file_name, i + 1)
 
-				if i >= len(text):# or (first_brace != -1 and last_brace != -1):
-					break
-
-				c = text[i]
-
-				if c == '{':
-					braces += 1
-					if first_brace == -1:
-						first_brace = i
-
-				elif c == '}':
-					braces -= 1
-
-					if braces < 0:
-						raise Exception('Invalid file. To many braces open.')
-					elif braces == 0:
-						last_brace = i + 1
-						break
-
-				i += 1
-
-			if braces > 0 or first_brace < 0 or last_brace < 0:
-				raise Exception('Invalid file. Can''t find method closure.')
-
-			scope = text[first_brace:last_brace]
-
-			if not 'cppu::supportsService' in scope:
-				print('%s: Needs to be converted to cppu::supportsService at line %d.' % (file_name, get_line(text, start)))
-
-def get_line(text, position):
-
-	lines = text.splitlines()
-	lines_size = [len(x) for x in lines]
-
-	pos = 0
-	line = 0
-
-	for l in lines_size:
-		pos += l
-		line += 1
-
-		if pos >= position:
-			return line
-
-	return line
+			i = i + 1
 
 def walk(path):
 
@@ -82,10 +42,11 @@ def walk(path):
 			dirs.remove('instdir')
 
 		for f in files:
-
-			if f.endswith('.c') or f.endswith('.cxx') or f.endswith('.h') or f.endswith('.hxx'):
+			
+			if f.endswith('.c') or f.endswith('.cxx') or f.endswith('.h') or f.endswith('.hxx') and 'supportsservice.hxx' not in f:
 
 				file_name = os.path.join(root, f)
+				#print file_name
 				check(file_name)
 
 
