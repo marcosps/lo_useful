@@ -20,6 +20,10 @@ Shows where are used chained appends. This appends needs to be replaced by strin
 
 Shows where are used some methods for string comparison. These can be replaced by `==` operator. Much more simpler.
 
+### find\_sal\_types.py
+
+Show files that are using sal_uLong or/and sal_uIntPtr. These types must be converted to sal_uInt32, sal_uInt64, size_t or "unsigned int" according to situation.
+
 ### get\_developers\_score.sh
 
 Show how many lines of code a developer has inserted, has changed, and how much commit he did. 
