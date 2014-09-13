@@ -183,7 +183,7 @@ fedoraInstall()
     if $download; then
         $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y --download-only
     else
-        $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y
+        $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y gstreamer-plugins-*
     fi
 }
 
