@@ -42,7 +42,6 @@ usageSyntax()
     echo " --dir [/some/folder/]    - Dep install and clone in /some/folder/"
     echo "                          - If no dir was informed, whill be installed" 
     echo "                            the deps and git clone in $HOME/libo/ folder"
-    echo " --download               - Download packeages instead of install them"
     echo " --no-update              - Don't update the repository"
     echo " --no-clone               - Only dep install, don't clone"
     echo " --ccache                 - Install ccache. It speeds up recompilation by"
@@ -91,7 +90,6 @@ debianInstall()
     # installing aptitude for a lot of reasons :)
     sudo apt-get install aptitude
 
-
     if $update; then
         sudo aptitude update
     fi
@@ -100,63 +98,21 @@ debianInstall()
         sudo aptitude install ccache
     fi
 
-    option="sudo aptitude install"
+    sudo aptitude build-dep libreoffice -y
 
-    if $download; then
-        option="aptitude download"
-        # installing the tools to verify the dependencies of a package
-        sudo aptitude install apt-rdepends
-    fi
-
-    if $download; then
-        double_jump=false
-
-        # this format usually is: Build-Depends: zlib1g-dev
-        for i in `apt-rdepends --build-depends --follow=DEPENDS libreoffice`
-        do
-            if $double_jump; then
-                double_jump=false
-                continue
-            fi
-
-            # after this part of build-dep, we have a number, so skip too
-            if [[ "$i" == "(>=" || "$i" == "(>>" ]]; then
-                double_jump=true
-                continue
-            fi
-
-            # skip deps by LibreOffice itself
-            case $i in
-                "libcmis-dev" | "libicu-dev" | "liblcms2-dev" | "libmdds-dev" | "libwpd-dev")
-                continue
-            esac
-
-            # first line of command
-            if [[ "$i" != "libreoffice" && "$i" != "Build-Depends:" && "$i" != "Build-Depends-Indep:" ]]; then
-
-                file_entry=`ls | grep "$i" | wc -l`
-                if [ $file_entry -eq 0 ]; then
-                    aptitude download $i
-                fi
-            fi
-        done
-    else
-        sudo aptitude build-dep libreoffice -y
-    fi
-
-    $option git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
-    $option libarchive-zip-perl 
-    $option libcupsys2-dev libcups2-dev
-    $option gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
+    sudo aptitude install git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
+    sudo aptitude install libarchive-zip-perl 
+    sudo aptitude install libcupsys2-dev libcups2-dev
+    sudo aptitude install gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
     # Ubuntu 13.04 - Missing
-    $option autoconf libcups2-dev libfontconfig1-dev g++ gcj-4.7-jdk gperf 
-    $option libjpeg-dev libxslt1-dev xsltproc libxml2-utils python3.3-dev 
-    $option libx11-dev libxt-dev libxext-dev libxrender-dev libx11-dev libxrandr-dev 
-    $option bison flex libgconf2-dev libdbus-glib-1-dev libgtk2.0-dev libgtk-3-dev
-    $option libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
-    $option libgl-dev libglu-dev ant junit4
+    sudo aptitude install autoconf libcups2-dev libfontconfig1-dev g++ gcj-4.7-jdk gperf 
+    sudo aptitude install libjpeg-dev libxslt1-dev xsltproc libxml2-utils python3.3-dev 
+    sudo aptitude install libx11-dev libxt-dev libxext-dev libxrender-dev libx11-dev libxrandr-dev 
+    sudo aptitude install bison flex libgconf2-dev libdbus-glib-1-dev libgtk2.0-dev libgtk-3-dev
+    sudo aptitude install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
+    sudo aptitude install libgl-dev libglu-dev ant junit4
     # Ubuntu 14.10 seems to not have libkrb5 as development dependency
-    $option libkrb5-dev
+    sudo aptitude install libkrb5-dev
 }
 
 fedoraInstall()
@@ -172,20 +128,8 @@ fedoraInstall()
         sudo yum install ccache
     fi
 
-    option="sudo yum install"
-
-    if $download; then
-        option="yum install"
-    fi
-
-    sudo yum install yum-downloadonly
     sudo yum-builddep libreoffice -y
-
-    if $download; then
-        $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y --download-only
-    else
-        $option git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y gstreamer-plugins-*
-    fi
+    sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y gstreamer-plugins-*
 }
 
 suseInstall()
@@ -285,7 +229,6 @@ cloneSyntaxError()
 inccache=false
 noclone=false
 clonedir=""
-download=false
 update=true
 
 ###
@@ -301,23 +244,6 @@ do
                 cloneSyntaxError
             fi 
             noclone=true;;
-        # if we want just ot download the deps, create a dir called
-        # deps and enter in the new dir, and call this shell again with the parameter
-        "--download")
-            mkdir deps 2> /dev/null
-
-            if [ ! -d "deps" ]; then
-                echo "Failed to create deps dir. ABORTING."
-                exit
-            fi
-
-            cd deps
-            bash ../$0 --downloadnow --no-update --no-clone
-            exit;;
-        # just for intern use, download the packets inside the deps dir
-        "--downloadnow")
-            # don't use sude just for download
-            download=true;;
         "--no-update")
             update=false;;
         "--dir")
