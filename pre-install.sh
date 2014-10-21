@@ -155,7 +155,8 @@ debianInstall()
     $option bison flex libgconf2-dev libdbus-glib-1-dev libgtk2.0-dev libgtk-3-dev
     $option libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
     $option libgl-dev libglu-dev ant junit4
-    # Ubuntu 13.04
+    # Ubuntu 14.10 seems to not have libkrb5 as development dependency
+    $option libkrb5-dev
 }
 
 fedoraInstall()
