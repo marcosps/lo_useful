@@ -121,15 +121,15 @@ fedoraInstall()
     echo " "
 
     if $update; then
-        sudo yum update
+        sudo yum update -y
     fi
 	
     if $inccache; then
-        sudo yum install ccache
+        sudo yum install ccache -y
     fi
 
     sudo yum-builddep libreoffice -y
-    sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel -y gstreamer-plugins-*
+    sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
 }
 
 suseInstall()
