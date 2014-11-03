@@ -42,7 +42,6 @@ usageSyntax()
     echo " --dir [/some/folder/]    - Dep install and clone in /some/folder/"
     echo "                          - If no dir was informed, whill be installed" 
     echo "                            the deps and git clone in $HOME/libo/ folder"
-    echo " --no-update              - Don't update the repository"
     echo " --no-clone               - Only dep install, don't clone"
     echo " --help                   - Show this help message"
     echo " "
@@ -85,12 +84,8 @@ debianInstall()
     echo " "
 
     # installing aptitude for a lot of reasons :)
+    sudo aptitude update
     sudo apt-get install aptitude
-
-    if $update; then
-        sudo aptitude update
-    fi
-
 
     sudo aptitude build-dep libreoffice -y
 
@@ -115,9 +110,7 @@ fedoraInstall()
     echo "Dep install for Fedora"
     echo " "
 
-    if $update; then
-        sudo yum update -y
-    fi
+    sudo yum update -y
 	
     sudo yum-builddep libreoffice -y
     sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
@@ -218,7 +211,6 @@ cloneSyntaxError()
 
 noclone=false
 clonedir=""
-update=true
 
 ###
 ### Check input parameters.
@@ -232,8 +224,6 @@ do
                 cloneSyntaxError
             fi 
             noclone=true;;
-        "--no-update")
-            update=false;;
         "--dir")
             if $noclone; then
                 cloneSyntaxError
