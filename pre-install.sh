@@ -39,9 +39,8 @@ usageSyntax()
 
     echo "Options:"
     echo " "
-    echo " --dir [/some/folder/]    - Dep install and clone in /some/folder/"
-    echo "                          - If no dir was informed, whill be installed" 
-    echo "                            the deps and git clone in $HOME/libo/ folder"
+    echo " --dir [/some/folder/]    - Clone in /some/folder/"
+    echo "                          - If no dir was informed, git will clone the source in $HOME/libo/ folder"
     echo " --no-clone               - Only dep install, don't clone"
     echo " --help                   - Show this help message"
     echo " "
