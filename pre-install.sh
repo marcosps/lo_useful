@@ -44,9 +44,6 @@ usageSyntax()
     echo "                            the deps and git clone in $HOME/libo/ folder"
     echo " --no-update              - Don't update the repository"
     echo " --no-clone               - Only dep install, don't clone"
-    echo " --ccache                 - Install ccache. It speeds up recompilation by"
-    echo "                            caching previous compilations and detecting when"
-    echo "                            the same compilation is being done again"
     echo " --help                   - Show this help message"
     echo " "
 }
@@ -94,12 +91,10 @@ debianInstall()
         sudo aptitude update
     fi
 
-    if $inccache; then
-        sudo aptitude install ccache
-    fi
 
     sudo aptitude build-dep libreoffice -y
 
+    sudo aptitude install ccache
     sudo aptitude install git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
     sudo aptitude install libarchive-zip-perl 
     sudo aptitude install libcupsys2-dev libcups2-dev
@@ -124,12 +119,9 @@ fedoraInstall()
         sudo yum update -y
     fi
 	
-    if $inccache; then
-        sudo yum install ccache -y
-    fi
-
     sudo yum-builddep libreoffice -y
     sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
+    sudo yum install ccache -y
 }
 
 suseInstall()
@@ -174,9 +166,7 @@ suseInstall()
     sudo zypper update
     sudo zypper in java-1_7_0-openjdk-devel # gcj is installed by default but it does not work reasonably.
     
-    if $inccache; then
-        sudo zypper in ccache
-    fi
+    sudo zypper in ccache
 
     if [$systype == 1]; then
         sudo zypper in krb5-devel-32bits
@@ -226,7 +216,6 @@ cloneSyntaxError()
     exit
 }
 
-inccache=false
 noclone=false
 clonedir=""
 update=true
@@ -238,7 +227,6 @@ while [ $# -ne 0 ]
 do
     case $1 in
         "--help") usageSyntax; exit;;
-        "--ccache") inccache=true;;
         "--no-clone")
             if [ "$clonedir" != "" ]; then
                 cloneSyntaxError
