@@ -51,7 +51,7 @@ gitClone()
     if $noclone; then
         exit
     fi
-	
+
     if [ "$clonedir" == "" ]; then
         cd $HOME
         git clone git://anongit.freedesktop.org/libreoffice/core libo && echo "Success!"
@@ -90,13 +90,13 @@ debianInstall()
 
     sudo aptitude install ccache
     sudo aptitude install git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
-    sudo aptitude install libarchive-zip-perl 
+    sudo aptitude install libarchive-zip-perl
     sudo aptitude install libcupsys2-dev libcups2-dev
     sudo aptitude install gperf libxslt1-dev libdbus-glib-1-dev libgstreamer-plugins-base0.10-dev
     # Ubuntu 13.04 - Missing
-    sudo aptitude install autoconf libcups2-dev libfontconfig1-dev g++ gcj-4.7-jdk gperf 
-    sudo aptitude install libjpeg-dev libxslt1-dev xsltproc libxml2-utils python3.3-dev 
-    sudo aptitude install libx11-dev libxt-dev libxext-dev libxrender-dev libx11-dev libxrandr-dev 
+    sudo aptitude install autoconf libcups2-dev libfontconfig1-dev g++ gcj-4.7-jdk gperf
+    sudo aptitude install libjpeg-dev libxslt1-dev xsltproc libxml2-utils python3.3-dev
+    sudo aptitude install libx11-dev libxt-dev libxext-dev libxrender-dev libx11-dev libxrandr-dev
     sudo aptitude install bison flex libgconf2-dev libdbus-glib-1-dev libgtk2.0-dev libgtk-3-dev
     sudo aptitude install libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
     sudo aptitude install libgl-dev libglu-dev ant junit4
@@ -110,7 +110,7 @@ fedoraInstall()
     echo " "
 
     sudo yum update -y
-	
+
     sudo yum-builddep libreoffice -y
     sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
     sudo yum install ccache -y
@@ -124,6 +124,7 @@ suseInstall()
     echo "3. 12.2"
     echo "4. 12.3"
     echo "5. 13.1"
+    echo "6. 13.2"
     echo " "
     read -p "Select your SUSE version: " version
 
@@ -133,6 +134,7 @@ suseInstall()
         3) vername="12.2";;
         4) vername="12.3";;
         5) vername="13.1";;
+        6) vername="13.2";;
         *) echo "Sorry, invalid option!"; exit;;
     esac
 
@@ -147,25 +149,25 @@ suseInstall()
         2) sysname="64 bits";;
         *) echo "Sorry, invalid option!"; exit;;
     esac
-    
+
     echo " "
     echo "Dep install for openSUSE" $vername $sysname
     echo "If you receive a question to answer [yes or no], please, read carrefully."
     echo "Maybe root's password will be asked more than once."
-    echo " "	
+    echo " "
 
     sudo zypper refresh
     sudo zypper update
     sudo zypper in java-1_7_0-openjdk-devel # gcj is installed by default but it does not work reasonably.
-    
+
     sudo zypper in ccache
 
     if [$systype == 1]; then
         sudo zypper in krb5-devel-32bits
     else
         sudo zypper in krb5-devel
-    fi	
-	
+    fi
+
     sudo zypper mr --enable "openSUSE-$vername-Source" # Enable te repo to download the source.
     sudo zypper si -d libreoffice # For OpenSUSE 11.4+ (was OpenOffice_org-bootstrap)
     sudo zypper in git libgnomeui-devel gawk junit doxygen python3-devel libreoffice-pyuno
@@ -221,7 +223,7 @@ do
         "--no-clone")
             if [ "$clonedir" != "" ]; then
                 cloneSyntaxError
-            fi 
+            fi
             noclone=true;;
         "--dir")
             if $noclone; then
