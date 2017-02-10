@@ -109,11 +109,11 @@ fedoraInstall()
     echo "Dep install for Fedora"
     echo " "
 
-    sudo yum update -y
+    sudo dnf update -y
 
-    sudo yum-builddep libreoffice -y
-    sudo yum install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
-    sudo yum install ccache -y
+    sudo dnf-builddep libreoffice -y
+    sudo dnf install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
+    sudo dnf install ccache -y
 }
 
 suseInstall()
