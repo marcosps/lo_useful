@@ -88,7 +88,6 @@ debianInstall()
 
     sudo aptitude build-dep libreoffice -y
 
-    sudo aptitude install ccache
     sudo aptitude install git-core libgnomeui-dev gawk junit4 doxygen libgstreamer0.10-dev -y
     sudo aptitude install libarchive-zip-perl
     sudo aptitude install libcupsys2-dev libcups2-dev
@@ -113,7 +112,6 @@ fedoraInstall()
 
     sudo dnf builddep libreoffice -y
     sudo dnf install git libgnomeui-devel gawk junit doxygen perl-Archive-Zip Cython python-devel gstreamer-plugins-* -y
-    sudo dnf install ccache -y
 }
 
 suseInstall()
@@ -159,8 +157,6 @@ suseInstall()
     sudo zypper refresh
     sudo zypper update
     sudo zypper in java-1_7_0-openjdk-devel # gcj is installed by default but it does not work reasonably.
-
-    sudo zypper in ccache
 
     if [$systype == 1]; then
         sudo zypper in krb5-devel-32bits
